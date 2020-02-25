@@ -3,7 +3,7 @@ require_relative 'lib/simulator'
 
 search_config = {
 	root_dir: "../release",
-	dir_names: ["result02", "result02s00", "result02s01", "result03", "result03s00"],
+	dir_names: ["result02", "result02s00", "result02s01", "result03", "result03s00", "result04", "result04s00"],
 	matcher: /(r\d+b\d)\.json/,
 	# matcher: /(r916b4)\.json/,
 }
@@ -11,6 +11,7 @@ search_config = {
 root_dirs = search_config[:dir_names].map{|dir_name| "#{search_config[:root_dir]}/#{dir_name}/parsed/battle_actions" }
 
 result = {}
+result2 = Hash.new(0)
 
 root_dirs.each do |root_dir|
    for fname in Dir.foreach(root_dir) do
@@ -49,6 +50,7 @@ root_dirs.each do |root_dir|
             elsif event[:type] == 'battle_action' && event[:skill_name] == '通常攻撃'
                declarer_name = event[:declarer]
                declarer = sim.players[declarer_name]
+               next if game[:players].select{|p| p[:name] == declarer_name}.first[:is_npc] || game[:players].select{|p| p[:name] == declarer_name}.first[:aid]
 
                target_name = nil
                event[:effects]&.each do |effect|
@@ -84,20 +86,20 @@ root_dirs.each do |root_dir|
                declarer_team = players[declarer_name][:team]
                target_team = players[target_name][:team]
                if declarer_team == target_team
-                  puts "ERR #{root_dir}/#{fname}"
-                  exit
+                  # 暴走中 念のためスキップ
+                  next
                end
                ng = false
                teams[target_team].each do |member_info|
                   member = sim.players[member_info[:name]]
-                  unless member && member.hate > 0
+                  unless member && member.hate.expected
                      ng = true
                      break
                   end
-                  if declarer.range + 1 >= declarer.position + member.position
-                     candidate.push(member.hate)
+                  if declarer.range + 1 >= declarer.zone.position + member.zone.position
+                     candidate.push(member.hate.expected)
                   else
-                     out_of_range.push(member.hate)
+                     out_of_range.push(member.hate.expected)
                   end
                end
                next if ng
@@ -106,12 +108,15 @@ root_dirs.each do |root_dir|
                candidate = out_of_range if candidate.empty?
                key = candidate.sort.map(&:to_s).join(',')
                result[key] = Hash.new(0) unless result[key]
-               result[key][target.hate] += 1
-               if key == "120" && target.hate != 120
+               result[key][target.hate.expected] += 1
+               if key == "120" && target.hate.expected != 120
                   puts "Z #{root_dir}/#{fname}"
                   puts "#{declarer_name} #{target_name}"
-                  p declarer.range
+                  p declarer.range, target.hate.expected
                   p candidate2, out_of_range
+               end
+               if candidate.select{|c| c == 120 }.size == 1 && candidate.select{|c| c == 10000 }.size == 1
+                  result2[target.hate.expected] += 1
                end
             end
             sim.apply_event(event)
@@ -123,3 +128,5 @@ end
 result.each do |key, x|
    puts "#{key}: #{x.to_s}"
 end
+
+p result2

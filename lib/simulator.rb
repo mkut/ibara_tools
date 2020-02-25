@@ -23,7 +23,7 @@ class Player
       @dx = Status::DX.new(@style.name, @style.dx)
       @ag = Status::AG.new(@style.name, @style.ag)
       @hl = Status::HL.new(@style.name, @style.hl)
-      @hate = Status::Status.new('HATE', @style.name)
+      @hate = Status::Hate.new(@style.name, 100)
       @affinities = Hash.new{|hash, key| hash[key] = Status::Status.new("#{key}特性", @style.name) }
       @resistances = Hash.new{|hash, key| hash[key] = Status::Status.new("#{key}耐性", @style.name) }
       @range = @style.name == 'Unknown' ? 0 : 1
@@ -173,6 +173,9 @@ class Simulator
             when Effect::Proc.of_status_change('HL')
                target = @players[effect[:target]]
                target.hl.apply_effect(effect, event)
+            when Effect::Proc.of_status_change('HATE')
+               target = @players[effect[:target]]
+               target.hate.apply_effect(effect, event)
             when Effect::Proc.of_status_change(/[火水風地光闇]特性/)
                target = @players[effect[:target]]
                /([火水風地光闇])特性/.match(effect[:stat])
