@@ -18,6 +18,19 @@ function compare_trade(a, b) {
    return a.id - b.id;
 }
 
+function group_trades(trades) {
+   const ret = [];
+   let prev_type = null;
+   trades.forEach(trade => {
+      if (prev_type !== trade.type) {
+         ret.push([]);
+         prev_type = trade.type;
+      }
+      ret[ret.length - 1].push(trade);
+   });
+   return ret;
+}
+
 export default class Trades extends React.Component {
    constructor(...args) {
       super(...args);
@@ -61,7 +74,9 @@ export default class Trades extends React.Component {
       return (
          <div className="trades">
             <div>取引一覧</div>
-            {this.state.trades.map((trade, i) => <Trade key={i} onRemoveTrade={this.handleRemoveTrade.bind(this)} index={i} trade={trade} players={this.props.players} />)}
+            {group_trades(this.state.trades).map((trades, i) => <div key={i} className="trade-group">
+               {trades.map((trade, j) => <Trade key={j} onRemoveTrade={this.handleRemoveTrade.bind(this)} index={i} trade={trade} players={this.props.players} />)}
+            </div>)}
             <div className="new-trade">
                <div>取引追加</div>
                <select value={this.state.tradeType} onChange={this.handleChangeTradeType.bind(this)}>
