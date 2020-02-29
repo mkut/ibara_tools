@@ -1,7 +1,7 @@
 export const players = [{
    eno: 370,
    ps: 208,
-   name: 'ドレイク教授',
+   name: '草門れい子',
    items: [
       { name: '不思議な武器', type: 'equipment', special: true },
       { name: '不思議な防具', type: 'equipment', special: true },
