@@ -1,6 +1,27 @@
 import React from 'react'
 import {idmax} from './NewTrade';
 
+export function sanitize(trades) {
+   const ids = [];
+   let maxId = 0;
+   const ret = [];
+   const extra = [];
+   trades.forEach(trade => {
+      if (ids[trade.id]) {
+         extra.push(trade);
+      } else {
+         ret.push(trade);
+         ids[trade.id] = true;
+         maxId = Math.max(maxId, trade.id);
+      }
+   });
+   extra.forEach(trade => {
+      ret.push({...trade, id: ++maxId});
+   });
+   idmax.value = maxId;
+   return ret;
+}
+
 export default class ShareTrades extends React.Component {
    constructor(...args) {
       super(...args);
@@ -16,28 +37,7 @@ export default class ShareTrades extends React.Component {
    }
 
    handleImport() {
-      this.props.onChangeTrades(this.sanitize(JSON.parse(this.state.text)));
-   }
-
-   sanitize(trades) {
-      const ids = [];
-      let maxId = 0;
-      const ret = [];
-      const extra = [];
-      trades.forEach(trade => {
-         if (ids[trade.id]) {
-            extra.push(trade);
-         } else {
-            ret.push(trade);
-            ids[trade.id] = true;
-            maxId = Math.max(maxId, trade.id);
-         }
-      });
-      extra.forEach(trade => {
-         ret.push({...trade, id: ++maxId});
-      });
-      idmax.value = maxId;
-      return ret;
+      this.props.onChangeTrades(sanitize(JSON.parse(this.state.text)));
    }
 
    handleChangeText(e) {

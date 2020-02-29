@@ -1,7 +1,7 @@
 import React from 'react'
 import NewTrade from './NewTrade';
 import Trade from './Trade';
-import ShareTrades from './ShareTrades';
+import ShareTrades, { sanitize } from './ShareTrades';
 import { TradeSimulator } from './sim/TradeSimulator';
 
 const options = ['アイテム破棄', 'アイテム手渡し', '食事', 'PS送付', 'アイテム送付', 'アイテム購入', '合成', '作製', '料理', '付加']
@@ -41,6 +41,16 @@ export default class Trades extends React.Component {
       };
    }
 
+   componentDidMount() {
+      if (localStorage) {
+         const tradesJson = localStorage.getItem('trades');
+         if (tradesJson) {
+            this.changeTrades(sanitize(JSON.parse(tradesJson)));
+         }
+      }
+
+   }
+
    changeTrades(newTrades) {
       newTrades.sort(compare_trade);
       const sim = new TradeSimulator(this.props.players);
@@ -53,7 +63,9 @@ export default class Trades extends React.Component {
          trades: finalTrades,
       });
       this.props.onChangeFinalState(sim.players());
-
+      if (localStorage) {
+         localStorage.setItem('trades', JSON.stringify(newTrades));
+      }
    }
 
    handleAddTrade(newTrade) {
