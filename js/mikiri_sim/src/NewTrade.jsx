@@ -3,10 +3,13 @@ import PlayerSelector from './form/PlayerSelector';
 import NumberInput from './form/NumberInput';
 import ShopItemSelector from './form/ShopItemSelector';
 
+export const idmax = {
+   value: 0,
+};
+
 export default class NewTrade extends React.Component {
    constructor(...args) {
       super(...args);
-      this.idmax = 0;
       this.state = {
          eno: null,
          itemId: null,
@@ -26,7 +29,7 @@ export default class NewTrade extends React.Component {
                type: this.props.type,
                eno: this.state.eno,
                itemId: this.state.itemId,
-               id: ++this.idmax,
+               id: ++idmax.value,
             });
             break;
          case 'アイテム手渡し':
@@ -36,7 +39,7 @@ export default class NewTrade extends React.Component {
                eno: this.state.eno,
                itemId: this.state.itemId,
                targetEno: this.state.targetEno,
-               id: ++this.idmax,
+               id: ++idmax.value,
             });
             break;
          case 'PS送付':
@@ -45,7 +48,7 @@ export default class NewTrade extends React.Component {
                eno: this.state.eno,
                targetEno: this.state.targetEno,
                ps: this.state.ps,
-               id: ++this.idmax,
+               id: ++idmax.value,
             });
             break;
          case 'アイテム購入':
@@ -53,7 +56,7 @@ export default class NewTrade extends React.Component {
                type: this.props.type,
                eno: this.state.eno,
                shopItem: this.state.shopItem,
-               id: ++this.idmax,
+               id: ++idmax.value,
             });
             break;
          case '合成':
@@ -64,7 +67,7 @@ export default class NewTrade extends React.Component {
                targetEno: this.state.targetEno,
                itemId: this.state.itemId,
                itemId2: this.state.itemId2,
-               id: ++this.idmax,
+               id: ++idmax.value,
             });
             break;
          case '作製':
@@ -74,7 +77,7 @@ export default class NewTrade extends React.Component {
                eno: this.state.eno,
                targetEno: this.state.targetEno,
                itemId: this.state.itemId,
-               id: ++this.idmax,
+               id: ++idmax.value,
             });
             break;
       }
