@@ -15,7 +15,7 @@ export default class Trades extends React.Component {
    }
 
    handleClickRemoveButton() {
-      this.props.onRemoveTrade(this.props.index);
+      this.props.onRemoveTrade(this.props.trade.id);
    }
 
    render() {

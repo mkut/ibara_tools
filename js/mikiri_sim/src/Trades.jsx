@@ -60,8 +60,8 @@ export default class Trades extends React.Component {
       this.changeTrades([...this.state.originalTrades, newTrade]);
    }
 
-   handleRemoveTrade(index) {
-      this.changeTrades(this.state.originalTrades.filter((_, i) => i !== index));
+   handleRemoveTrade(id) {
+      this.changeTrades(this.state.originalTrades.filter(trade => trade.id !== id));
    }
 
    handleChangeTradeType(e) {
@@ -75,7 +75,7 @@ export default class Trades extends React.Component {
          <div className="trades">
             <div>取引一覧</div>
             {group_trades(this.state.trades).map((trades, i) => <div key={i} className="trade-group">
-               {trades.map((trade, j) => <Trade key={j} onRemoveTrade={this.handleRemoveTrade.bind(this)} index={i} trade={trade} players={this.props.players} />)}
+               {trades.map(trade => <Trade key={trade.id} onRemoveTrade={this.handleRemoveTrade.bind(this)} trade={trade} players={this.props.players} />)}
             </div>)}
             <div className="new-trade">
                <div>取引追加</div>
