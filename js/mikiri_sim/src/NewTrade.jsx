@@ -1,6 +1,8 @@
 import React from 'react'
 import PlayerSelector from './form/PlayerSelector';
+import ItemTypeSelector from './form/ItemTypeSelector';
 import NumberInput from './form/NumberInput';
+import TextInput from './form/TextInput';
 import ShopItemSelector from './form/ShopItemSelector';
 
 export const idmax = {
@@ -17,6 +19,8 @@ export default class NewTrade extends React.Component {
          targetEno: null,
          ps: null,
          shopItem: null,
+         itemType: null,
+         itemName: null,
       };
    }
 
@@ -80,6 +84,16 @@ export default class NewTrade extends React.Component {
                id: ++idmax.value,
             });
             break;
+         case 'アイテム送付(外部から)':
+            this.props.onCreate({
+               type: this.props.type,
+               eno: this.state.eno,
+               targetEno: this.state.targetEno,
+               itemType: this.state.itemType,
+               itemName: this.state.itemName,
+               id: ++idmax.value,
+            });
+            break;
       }
    }
 
@@ -119,6 +133,18 @@ export default class NewTrade extends React.Component {
       });
    }
 
+   handleSetItemType(newValue) {
+      this.setState({
+         itemType: newValue,
+      });
+   }
+
+   handleSetItemName(newValue) {
+      this.setState({
+         itemName: newValue,
+      });
+   }
+
    checkSubmittable() {
       switch (this.props.type) {
          case 'アイテム破棄':
@@ -137,6 +163,8 @@ export default class NewTrade extends React.Component {
          case '作製':
          case '料理':
             return this.state.eno && this.state.targetEno && this.state.itemId;
+         case 'アイテム送付(外部から)':
+            return this.state.eno && this.state.targetEno && this.state.itemType && this.state.itemName;
       }
       return false;
    }
@@ -259,6 +287,31 @@ export default class NewTrade extends React.Component {
                <tr key="itemId">
                   <th>何から(ItemID)</th>
                   <td><NumberInput value={this.state.itemId} onChange={this.handleSetItemId.bind(this)} /></td>
+               </tr>
+            );
+         case 'アイテム送付(外部から)':
+            trs.push(
+               <tr key="eno">
+                  <th>誰が(ENO)</th>
+                  <td><NumberInput value={this.state.eno} onChange={this.handleSetEno.bind(this)} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="targetEno">
+                  <th>誰に</th>
+                  <td><PlayerSelector value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} players={this.props.players} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="itemType">
+                  <th>何を(種類)</th>
+                  <td><ItemTypeSelector value={this.state.itemType} onChange={this.handleSetItemType.bind(this)} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="itemName">
+                  <th>何を(名前))</th>
+                  <td><TextInput value={this.state.itemName} onChange={this.handleSetItemName.bind(this)} /></td>
                </tr>
             );
       }

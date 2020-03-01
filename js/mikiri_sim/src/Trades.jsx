@@ -4,11 +4,15 @@ import Trade from './Trade';
 import ShareTrades, { sanitize } from './ShareTrades';
 import { TradeSimulator } from './sim/TradeSimulator';
 
-const options = ['アイテム破棄', 'アイテム手渡し', '食事', 'PS送付', 'アイテム送付', 'アイテム購入', '合成', '作製', '料理', '付加']
+const options = ['アイテム破棄', 'アイテム手渡し', '食事', 'PS送付', ['アイテム送付', 'アイテム送付(外部から)'], 'アイテム購入', '合成', '作製', '料理', '付加']
+
+function getTypeId(type) {
+   return options.findIndex(option => option instanceof Array ? option.includes(type) : option === type);
+}
 
 function compare_trade(a, b) {
-   const typeIdA = options.findIndex(option => option === a.type);
-   const typeIdB = options.findIndex(option => option === b.type);
+   const typeIdA = getTypeId(a.type);
+   const typeIdB = getTypeId(b.type);
    if (typeIdA != typeIdB) {
       return typeIdA - typeIdB;
    }
@@ -20,11 +24,12 @@ function compare_trade(a, b) {
 
 function group_trades(trades) {
    const ret = [];
-   let prev_type = null;
+   let prevTypeId = null;
    trades.forEach(trade => {
-      if (prev_type !== trade.type) {
+      const typeId = getTypeId(trade.type);
+      if (prevTypeId !== typeId) {
          ret.push([]);
-         prev_type = trade.type;
+         prevTypeId = typeId;
       }
       ret[ret.length - 1].push(trade);
    });
@@ -92,7 +97,7 @@ export default class Trades extends React.Component {
             <div className="new-trade">
                <div>取引追加</div>
                <select value={this.state.tradeType} onChange={this.handleChangeTradeType.bind(this)}>
-                  {options.map(option => <option key={option} value={option}>{option}</option>)}
+                  {options.flat().map(option => <option key={option} value={option}>{option}</option>)}
                </select>
                <NewTrade type={this.state.tradeType} onCreate={this.handleAddTrade.bind(this)} players={this.props.players} />
             </div>

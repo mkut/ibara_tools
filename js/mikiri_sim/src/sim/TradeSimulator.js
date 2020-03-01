@@ -72,6 +72,42 @@ export class TradeSimulator {
       };
    }
 
+   sendItemFromOutside(trade) {
+      const player = this.state[trade.eno];
+      if (player) {
+         return {...trade,
+            warning: '対象内のプレイヤーのアイテム手渡し(外部から)',
+         }
+      }
+      const item = {
+         type: trade.itemType,
+         name: trade.itemName,
+      }
+
+      let targetItemId = null;
+      const targetPlayer = this.state[trade.targetEno];
+      if (!targetPlayer) {
+         return {...trade,
+            warning: '対象外のプレイヤーへアイテム手渡し(外部から)',
+         }
+      }
+      for (let i = 0; i < targetPlayer.items.length; i++) {
+         if (!targetPlayer.items[i]) {
+            targetItemId = i + 1;
+            break;
+         }
+      };
+      if (!targetItemId) {
+         targetItemId = targetPlayer.items.length + 1;
+      }
+      targetPlayer.items[targetItemId - 1] = item;
+
+      return {...trade,
+         item: item,
+         targetItemId: targetItemId,
+      };
+   }
+
    eatItem(trade) {
       const player = this.state[trade.eno];
       if (!player) {
@@ -277,11 +313,11 @@ export class TradeSimulator {
             warning: '素材でないアイテムを付加',
          };
       }
-      targetPlayer.items[trade.itemId1 - 1] = {
+      targetPlayer.items[trade.itemId - 1] = {
          type: 'equipment',
-         name: `${item.name}+${item2.name}付加`,
+         name: `${item.name}+付加(${item2.name})`,
          special: item.special || item2.special,
-      }
+      };
       targetPlayer.items[trade.itemId2 - 1] = null;
       return {...trade,
          item: item,
@@ -291,12 +327,13 @@ export class TradeSimulator {
 
    apply(trade) {
       switch (trade.type) {
-         //['アイテム破棄', 'アイテム手渡し', '食事', 'PS送付', 'アイテム送付', 'アイテム購入', '合成', '作製', '料理', '付加']
          case 'アイテム破棄':
             return this.trashItem(trade);
          case 'アイテム手渡し':
          case 'アイテム送付':
             return this.sendItem(trade);
+         case 'アイテム送付(外部から)':
+            return this.sendItemFromOutside(trade);
          case '食事':
             return this.eatItem(trade);
          case 'PS送付':
