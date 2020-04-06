@@ -40,6 +40,10 @@ export default class ShareTrades extends React.Component {
       this.props.onChangeTrades(sanitize(JSON.parse(this.state.text)));
    }
 
+   handleReset() {
+      this.props.onChangeTrades([]);
+   }
+
    handleChangeText(e) {
       this.setState({
          text: e.target.value,
@@ -54,6 +58,7 @@ export default class ShareTrades extends React.Component {
             </div>
             <button onClick={this.handleExport.bind(this)}>エクスポート</button>
             <button onClick={this.handleImport.bind(this)}>インポート</button>
+            <button onClick={this.handleReset.bind(this)}>リセット</button>
          </div>
       );
    }
