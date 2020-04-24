@@ -45,7 +45,7 @@ export const players = [{
    ps: 240,
    name: 'モドラヘレク・ダンヘンリー',
    items: [
-      { name: '駄物', type: 'equipment', special: true },
+      { name: '駄物', type: 'material', special: true },
       { name: '不思議な防具', type: 'equipment', special: true },
       { name: '彼の人を想う練香', type: 'equipment' },
       { name: 'ストレートバーベル16G', type: 'equipment', special: true },
@@ -68,7 +68,7 @@ export const players = [{
    ps: 267,
    name: 'ニアク・セイン＝アーデ',
    items: [
-      { name: '駄物', type: 'equipment', special: true },
+      { name: '駄物', type: 'material', special: true },
       { name: '不思議な防具', type: 'equipment', special: true },
       { name: '不思議な装飾', type: 'equipment', special: true },
       { name: '手錠の尖ったところ', type: 'equipment', special: true },
@@ -88,7 +88,7 @@ export const players = [{
    ps: 220,
    name: 'エインヴァス・リリマール',
    items: [
-      { name: '駄物', type: 'equipment', special: true },
+      { name: '駄物', type: 'material', special: true },
       { name: '古雑誌', type: 'material' },
       { name: '不思議な装飾', type: 'equipment', special: true },
       null,
