@@ -3,7 +3,7 @@ import React from 'react'
 export default class NumberInput extends React.Component {
    handleChange(e) {
       let newValue = Number(e.target.value);
-      if (newValue === 0) {
+      if (isNaN(newValue) || newValue === 0) {
          newValue = null;
       }
       this.props.onChange(newValue);

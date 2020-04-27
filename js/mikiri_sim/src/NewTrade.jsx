@@ -84,6 +84,7 @@ export default class NewTrade extends React.Component {
                id: ++idmax.value,
             });
             break;
+         case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             this.props.onCreate({
                type: this.props.type,
@@ -163,6 +164,7 @@ export default class NewTrade extends React.Component {
          case '作製':
          case '料理':
             return this.state.eno && this.state.targetEno && this.state.itemId;
+         case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             return this.state.eno && this.state.targetEno && this.state.itemType && this.state.itemName;
       }
@@ -198,7 +200,7 @@ export default class NewTrade extends React.Component {
             trs.push(
                <tr key="targetEno">
                   <th>誰に(ENO)</th>
-                  <td><NumberInput value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} /></td>
+                  <td><PlayerSelector value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
@@ -212,13 +214,13 @@ export default class NewTrade extends React.Component {
             trs.push(
                <tr key="eno">
                   <th>誰が(ENO)</th>
-                  <td><NumberInput value={this.state.eno} onChange={this.handleSetEno.bind(this)} /></td>
+                  <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
                <tr key="targetEno">
                   <th>誰に(ENO)</th>
-                  <td><NumberInput value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} /></td>
+                  <td><PlayerSelector value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
@@ -247,7 +249,7 @@ export default class NewTrade extends React.Component {
             trs.push(
                <tr key="eno">
                   <th>誰が(ENO)</th>
-                  <td><NumberInput value={this.state.eno} onChange={this.handleSetEno.bind(this)} /></td>
+                  <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
@@ -274,7 +276,7 @@ export default class NewTrade extends React.Component {
             trs.push(
                <tr key="eno">
                   <th>誰が(ENO)</th>
-                  <td><NumberInput value={this.state.eno} onChange={this.handleSetEno.bind(this)} /></td>
+                  <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
@@ -290,11 +292,12 @@ export default class NewTrade extends React.Component {
                </tr>
             );
             break;
+         case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             trs.push(
                <tr key="eno">
                   <th>誰が(ENO)</th>
-                  <td><NumberInput value={this.state.eno} onChange={this.handleSetEno.bind(this)} /></td>
+                  <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
@@ -311,7 +314,7 @@ export default class NewTrade extends React.Component {
             );
             trs.push(
                <tr key="itemName">
-                  <th>何を(名前))</th>
+                  <th>何を(名前)</th>
                   <td><TextInput value={this.state.itemName} onChange={this.handleSetItemName.bind(this)} /></td>
                </tr>
             );

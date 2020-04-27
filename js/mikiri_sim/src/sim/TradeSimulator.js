@@ -15,7 +15,7 @@ export class TradeSimulator {
       const player = this.state[trade.eno];
       if (!player) {
          return {...trade,
-            warning: '対象外のプレイヤーのアイテム破棄',
+            // warning: '対象外のプレイヤーのアイテム破棄',
          }
       }
       const item = player.items[trade.itemId - 1];
@@ -34,19 +34,19 @@ export class TradeSimulator {
       const player = this.state[trade.eno];
       if (!player) {
          return {...trade,
-            warning: '対象外のプレイヤーのアイテム手渡し',
+            warning: '対象外のプレイヤーのアイテム送付/手渡し',
          }
       }
       const item = player.items[trade.itemId - 1];
       if (!item) {
          return {...trade,
-            warning: '存在しないアイテムを手渡し',
+            warning: '存在しないアイテム送付/手渡し',
          }
       }
       if (item.special) {
          return {...trade,
             item: item,
-            warning: '特別なアイテムを手渡し',
+            warning: '特別なアイテム送付/手渡し',
          }
       }
 
@@ -76,7 +76,7 @@ export class TradeSimulator {
       const player = this.state[trade.eno];
       if (player) {
          return {...trade,
-            warning: '対象内のプレイヤーのアイテム手渡し(外部から)',
+            warning: '対象内のプレイヤーのアイテム送付/手渡し(外部から)',
          }
       }
       const item = {
@@ -88,7 +88,7 @@ export class TradeSimulator {
       const targetPlayer = this.state[trade.targetEno];
       if (!targetPlayer) {
          return {...trade,
-            warning: '対象外のプレイヤーへアイテム手渡し(外部から)',
+            // warning: '対象外のプレイヤーへアイテム送付/手渡し(外部から)',
          }
       }
       for (let i = 0; i < targetPlayer.items.length; i++) {
@@ -112,7 +112,7 @@ export class TradeSimulator {
       const player = this.state[trade.eno];
       if (!player) {
          return {...trade,
-            warning: '対象外のプレイヤーの食事',
+            // warning: '対象外のプレイヤーの食事',
          }
       }
       const item = player.items[trade.itemId - 1];
@@ -157,7 +157,7 @@ export class TradeSimulator {
       const player = this.state[trade.eno];
       if (!player) {
          return {...trade,
-            warning: '対象外のプレイヤーのアイテム購入',
+            // warning: '対象外のプレイヤーのアイテム購入',
          }
       }
 
@@ -189,7 +189,7 @@ export class TradeSimulator {
       const targetPlayer = this.state[trade.targetEno];
       if (!targetPlayer) {
          return {...trade,
-            warning: '対象外のプレイヤーの合成',
+            // warning: '対象外のプレイヤーに対する合成',
          }
       }
       const item = targetPlayer.items[trade.itemId - 1];
@@ -222,7 +222,7 @@ export class TradeSimulator {
       const targetPlayer = this.state[trade.targetEno];
       if (!targetPlayer) {
          return {...trade,
-            warning: '対象外のプレイヤーの作製',
+            // warning: '対象外のプレイヤーに対する作製',
          }
       }
       const item = targetPlayer.items[trade.itemId - 1];
@@ -251,7 +251,7 @@ export class TradeSimulator {
       const targetPlayer = this.state[trade.targetEno];
       if (!targetPlayer) {
          return {...trade,
-            warning: '対象外のプレイヤーの料理',
+            // warning: '対象外のプレイヤーに対する料理',
          }
       }
       const item = targetPlayer.items[trade.itemId - 1];
@@ -280,7 +280,7 @@ export class TradeSimulator {
       const targetPlayer = this.state[trade.targetEno];
       if (!targetPlayer) {
          return {...trade,
-            warning: '対象外のプレイヤーの付加',
+            // warning: '対象外のプレイヤーに対する付加',
          }
       }
       const item = targetPlayer.items[trade.itemId - 1];
@@ -332,6 +332,7 @@ export class TradeSimulator {
          case 'アイテム手渡し':
          case 'アイテム送付':
             return this.sendItem(trade);
+         case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             return this.sendItemFromOutside(trade);
          case '食事':

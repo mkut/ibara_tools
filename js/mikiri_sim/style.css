@@ -16,8 +16,41 @@
    margin: 10px 10px;
 }
 
+.trades-title {
+   font-size: larger;
+   font-weight: bold;
+   border-bottom: 1px solid black;
+}
+
 .trade-group {
    margin: 10px;
+}
+
+.trade-group-header {
+   font-weight: bold;
+}
+
+.trade {
+   margin-left: 20px;
+}
+
+.player-name {
+   font-weight: bold;
+   color: #d03070;
+}
+
+.target-player-name {
+   font-weight: bold;
+   color: #d07030;
+}
+
+.item-name, .ps-name {
+   font-weight: bold;
+   color: #7030d0;
+}
+
+.item-slot-name {
+   font-weight: bold;
 }
 
 .new-trade {
@@ -45,4 +78,6 @@
 
 .warning {
    color: red;
+   font-weight: bold;
+   text-decoration: underline;
 }

@@ -1,6 +1,10 @@
 import React from 'react'
 
-export default class Trades extends React.Component {
+import PlayerName from './PlayerName';
+import ItemName from './ItemName';
+import ItemSlotName from './ItemSlotName';
+
+export default class Trade extends React.Component {
    playerName(eno) {
       const player = this.props.players.find(player => player.eno === eno);
       return player ? `ENO#${eno}(${player.name})` : `ENO#${eno}`;
@@ -25,77 +29,108 @@ export default class Trades extends React.Component {
          case 'アイテム破棄':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.displayItem(itemId, item)} を破棄する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemName item={item} itemId={itemId} /> を破棄する。
                </span>
             );
             break;
          case 'アイテム手渡し':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.displayItemSlot(targetEno, targetItemId)} に {this.displayItem(itemId, item)} を手渡しする。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemSlotName targetEno={targetEno} targetItemId={targetItemId} players={this.props.players} /> に&nbsp;
+                  <ItemName item={item} itemId={itemId} /> を手渡しする。
+               </span>
+            );
+            break;
+         case 'アイテム手渡し(外部から)':
+            text = (
+               <span>
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemSlotName targetEno={targetEno} targetItemId={targetItemId} players={this.props.players} /> に&nbsp;
+                  <ItemName itemName={itemName} /> を手渡しする。
                </span>
             );
             break;
          case '食事':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.displayItem(itemId, item)} を食べる。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemName item={item} itemId={itemId} /> を食べる。
                </span>
             );
             break;
          case 'PS送付':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.playerName(targetEno)} に {ps}PS 送付する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <PlayerName eno={targetEno} players={this.props.players} target /> に&nbsp;
+                  <span className="ps-name">{ps}PS</span> 送付する。
                </span>
             );
             break;
          case 'アイテム送付':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.displayItemSlot(targetEno, targetItemId)} に {this.displayItem(itemId, item)} を送付する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemSlotName targetEno={targetEno} targetItemId={targetItemId} players={this.props.players} /> に&nbsp;
+                  <ItemName item={item} itemId={itemId} /> を送付する。
                </span>
             );
             break;
          case 'アイテム送付(外部から)':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.displayItemSlot(targetEno, targetItemId)} に {itemName} を送付する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemSlotName targetEno={targetEno} targetItemId={targetItemId} players={this.props.players} /> に&nbsp;
+                  <ItemName itemName={itemName} /> を送付する。
                </span>
             );
             break;
          case 'アイテム購入':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.displayItemSlot(eno, targetItemId)} に {shopItem.name} を購入する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <ItemSlotName targetEno={eno} targetItemId={targetItemId} players={this.props.players} /> に&nbsp;
+                  <ItemName itemName={shopItem.name} /> を購入する。
                </span>
             );
             break;
          case '合成':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.playerName(targetEno)} の {this.displayItem(itemId, item)} に {this.displayItem(itemId2, item2)} を合成する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <PlayerName eno={targetEno} players={this.props.players} target /> の&nbsp;
+                  <ItemName item={item} itemId={itemId} /> に&nbsp;
+                  <ItemName item={item2} itemId={itemId2} /> を合成する。
                </span>
             );
             break;
          case '作製':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.playerName(targetEno)} の {this.displayItem(itemId, item)} で作製する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <PlayerName eno={targetEno} players={this.props.players} target /> の&nbsp;
+                  <ItemName item={item} itemId={itemId} /> で作製する。
                </span>
             );
             break;
          case '料理':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.playerName(targetEno)} の {this.displayItem(itemId, item)} で料理する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <PlayerName eno={targetEno} players={this.props.players} target /> の&nbsp;
+                  <ItemName item={item} itemId={itemId} /> で料理する。
                </span>
             );
             break;
          case '付加':
             text = (
                <span>
-                  {this.playerName(eno)} が {this.playerName(targetEno)} の {this.displayItem(itemId, item)} に {this.displayItem(itemId2, item2)} を付加する。
+                  <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
+                  <PlayerName eno={targetEno} players={this.props.players} target /> の&nbsp;
+                  <ItemName item={item} itemId={itemId} /> に&nbsp;
+                  <ItemName item={item2} itemId={itemId2} /> を付加する。
                </span>
             );
             break;

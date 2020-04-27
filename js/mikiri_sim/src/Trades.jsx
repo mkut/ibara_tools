@@ -4,7 +4,7 @@ import Trade from './Trade';
 import ShareTrades, { sanitize } from './ShareTrades';
 import { TradeSimulator } from './sim/TradeSimulator';
 
-const options = ['アイテム破棄', 'アイテム手渡し', '食事', 'PS送付', ['アイテム送付', 'アイテム送付(外部から)'], 'アイテム購入', '合成', '作製', '料理', '付加']
+const options = ['アイテム破棄', ['アイテム手渡し', 'アイテム手渡し(外部から)'], '食事', 'PS送付', ['アイテム送付', 'アイテム送付(外部から)'], 'アイテム購入', '合成', '作製', '料理', '付加']
 
 function getTypeId(type) {
    return options.findIndex(option => option instanceof Array ? option.includes(type) : option === type);
@@ -90,8 +90,9 @@ export default class Trades extends React.Component {
    render() {
       return (
          <div className="trades">
-            <div>取引一覧</div>
+            <div className="trades-title">取引一覧</div>
             {group_trades(this.state.trades).map((trades, i) => <div key={i} className="trade-group">
+               <div className="trade-group-header">{trades[0].type}</div>
                {trades.map(trade => <Trade key={trade.id} onRemoveTrade={this.handleRemoveTrade.bind(this)} trade={trade} players={this.props.players} />)}
             </div>)}
             <div className="new-trade">
