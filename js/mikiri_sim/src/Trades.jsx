@@ -3,6 +3,7 @@ import NewTrade from './NewTrade';
 import Trade from './Trade';
 import ShareTrades, { sanitize } from './ShareTrades';
 import { TradeSimulator } from './sim/TradeSimulator';
+import PlayerSelector from './form/PlayerSelector';
 
 const options = ['アイテム破棄', ['アイテム手渡し', 'アイテム手渡し(外部から)'], '食事', 'PS送付', ['アイテム送付', 'アイテム送付(外部から)'], 'アイテム購入', '合成', '作製', '料理', '付加']
 
@@ -22,18 +23,40 @@ function compare_trade(a, b) {
    return a.id - b.id;
 }
 
-function group_trades(trades) {
+function group_trades(trades, filterPlayer, showRelated) {
    const ret = [];
    let prevTypeId = null;
-   trades.forEach(trade => {
-      const typeId = getTypeId(trade.type);
-      if (prevTypeId !== typeId) {
-         ret.push([]);
-         prevTypeId = typeId;
-      }
-      ret[ret.length - 1].push(trade);
-   });
+   trades
+      .filter(trade => {
+         let ok = true;
+         if (filterPlayer) {
+            ok = trade.eno === filterPlayer;
+            if (showRelated) {
+               ok = ok || (trade.targetEno === filterPlayer);
+            }
+         }
+         return ok;
+      })
+      .forEach(trade => {
+         const typeId = getTypeId(trade.type);
+         if (prevTypeId !== typeId) {
+            ret.push([]);
+            prevTypeId = typeId;
+         }
+         ret[ret.length - 1].push(trade);
+      });
    return ret;
+}
+
+function normalizeTradeType(type) {
+   const opt = options.find(opt => opt instanceof Array ? opt.includes(type) : opt === type);
+   if (opt) {
+      return opt instanceof Array ? opt[0] : opt;
+   } else {
+      console.error('Unknown type: ' + type);
+      return type;
+   }
+
 }
 
 export default class Trades extends React.Component {
@@ -43,6 +66,8 @@ export default class Trades extends React.Component {
          originalTrades: [],
          trades: [],
          tradeType: 'アイテム破棄',
+         filterPlayer: null,
+         showRelated: false,
       };
    }
 
@@ -87,12 +112,31 @@ export default class Trades extends React.Component {
       });
    }
 
+   handleChangePlayerFilter(filterPlayer) {
+      this.setState({ filterPlayer });
+   }
+
+   handleToggleShowRelated(e) {
+      const showRelated = e.target.checked;
+      console.log(showRelated);
+      this.setState({ showRelated });
+   }
+
    render() {
       return (
          <div className="trades">
-            <div className="trades-title">取引一覧</div>
-            {group_trades(this.state.trades).map((trades, i) => <div key={i} className="trade-group">
-               <div className="trade-group-header">{trades[0].type}</div>
+            <div className="trades-header">
+               <div className="trades-title">取引一覧</div>
+               <div className="trades-filter">
+                  <PlayerSelector value={this.state.filterPlayer} onChange={this.handleChangePlayerFilter.bind(this)} players={this.props.players} allowDeselect defaultOption="全表示" />
+               </div>
+               <div className="trades-filter">
+                  <input type="checkbox" checked={this.state.showRelated} onChange={this.handleToggleShowRelated.bind(this)} />
+                  <label>関係する取引も表示</label>
+               </div>
+            </div>
+            {group_trades(this.state.trades, this.state.filterPlayer, this.state.showRelated).map((trades, i) => <div key={i} className="trade-group">
+               <div className="trade-group-header">{normalizeTradeType(trades[0].type)}</div>
                {trades.map(trade => <Trade key={trade.id} onRemoveTrade={this.handleRemoveTrade.bind(this)} trade={trade} players={this.props.players} />)}
             </div>)}
             <div className="new-trade">

@@ -16,10 +16,23 @@
    margin: 10px 10px;
 }
 
+.trades-header {
+   border-bottom: 1px solid black;
+   display: flex;
+}
+
 .trades-title {
    font-size: larger;
    font-weight: bold;
-   border-bottom: 1px solid black;
+}
+
+.trades-filter {
+   margin-left: 20px;
+   display: flex;
+}
+
+.trades-filter-label {
+   margin-right: 15px;
 }
 
 .trade-group {
