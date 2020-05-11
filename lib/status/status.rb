@@ -16,10 +16,11 @@ module Status
 
       def apply_effect(effect, event)
          @events.push(event)
+         @expected = nil
       end
 
-      def to_s
-         effects = ([base_name || 'Unknown'] + @events.map{|e| e[:skill_name] }).join('/')
+      def to_s(with_base = false)
+         effects = ((!with_base && @base ? [] : [base_name || 'Unknown']) + @events.map{|e| e[:skill_name] }).join('/')
          expected = @expected || '??'
          ret = "#{@name}#{expected}(#{effects})"
       end

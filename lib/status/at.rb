@@ -7,7 +7,9 @@ module Status
       end
 
       def apply_effect(effect, event)
+         expected = @expected
          super(effect, event)
+         @expected = expected
          return unless @expected && @base
          case event[:skill_name]
          when '攻勢'

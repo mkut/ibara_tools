@@ -7,22 +7,25 @@ require_relative 'effect/proc'
 class Player
    attr_accessor :name
    attr_accessor :style
-   attr_reader :at, :df, :dx, :ag, :hl, :hate
+   attr_accessor :is_npc
+   attr_reader :at, :df, :dx, :ag, :hl, :hate, :lk
    attr_accessor :affinities, :resistances
    attr_accessor :mhp, :hp, :msp, :sp
    attr_accessor :range, :equipped
    attr_accessor :zone
    attr_accessor :buffs, :stat_buffs, :damage_adjusts
 
-   def initialize(name, style, zone)
+   def initialize(name, style, zone, is_npc = false)
       @name = name
       @style = Style::of(style)
       @zone = zone
+      @is_npc = is_npc
       @at = Status::AT.new(@style.name, @style.at)
       @df = Status::DF.new(@style.name, @style.df)
       @dx = Status::DX.new(@style.name, @style.dx)
       @ag = Status::AG.new(@style.name, @style.ag)
       @hl = Status::HL.new(@style.name, @style.hl)
+      @lk = Status::Status.new('LK', @style.name, 100)
       @hate = Status::Hate.new(@style.name, 100)
       @affinities = Hash.new{|hash, key| hash[key] = Status::Status.new("#{key}特性", @style.name) }
       @resistances = Hash.new{|hash, key| hash[key] = Status::Status.new("#{key}耐性", @style.name) }
@@ -76,7 +79,7 @@ class Simulator
       if player[:is_npc]
          /([^A-Z]+)[A-Z]/.match(name)
          real_name = $1
-         @players[name] = Player.new(name, real_name, tmp_zone)
+         @players[name] = Player.new(name, real_name, tmp_zone, true)
       else
          @players[name] = Player.new(name, player[:style], tmp_zone)
       end
@@ -141,7 +144,7 @@ class Simulator
          new_players = {}
          event[:players]&.each do |player|
             zone = @zones.select{|zone| zone.position == player[:position] && zone.side == player[:team] }.first
-            new_player = @players.fetch(player[:name]) {|key| Player.new(player[:name], 'エイド', zone) unless @players[player[:name]] }
+            new_player = @players.fetch(player[:name]) {|key| Player.new(player[:name], 'エイド', zone, true) unless @players[player[:name]] }
             new_player.mhp = player[:mhp]
             new_player.zone = zone
             new_players[player[:name]] = new_player
@@ -157,7 +160,7 @@ class Simulator
             next unless @players[effect[:target]]
             case effect
             when Effect::Proc.of_type('summon')
-               @players[effect[:target]] = Player.new(effect[:target], 'エイド', declarer.zone) # TODO 正しい隊列が分からない
+               @players[effect[:target]] = Player.new(effect[:target], 'エイド', declarer.zone, true) # TODO 正しい隊列が分からない
             when Effect::Proc.of_status_change('AT')
                target = @players[effect[:target]]
                target.at.apply_effect(effect, event)
@@ -176,6 +179,9 @@ class Simulator
             when Effect::Proc.of_status_change('HATE')
                target = @players[effect[:target]]
                target.hate.apply_effect(effect, event)
+            when Effect::Proc.of_status_change('LK')
+               target = @players[effect[:target]]
+               target.lk.apply_effect(effect, event)
             when Effect::Proc.of_status_change(/[火水風地光闇]特性/)
                target = @players[effect[:target]]
                /([火水風地光闇])特性/.match(effect[:stat])
