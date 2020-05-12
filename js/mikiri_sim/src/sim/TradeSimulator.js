@@ -316,7 +316,7 @@ export class TradeSimulator {
       targetPlayer.items[trade.itemId - 1] = {
          type: 'equipment',
          name: `${item.name}+付加(${item2.name})`,
-         special: item.special || item2.special,
+         special: item.special,
       };
       targetPlayer.items[trade.itemId2 - 1] = null;
       return {...trade,
