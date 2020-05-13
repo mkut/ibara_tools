@@ -3,13 +3,37 @@ require_relative 'lib/simulator'
 
 search_config = {
 	root_dir: "../release",
-	versions: ["result04", "result04s00"],
+	versions: [
+      "result03s00", "result03",
+      "result04s00", "result04",
+      "result05s00", "result05",
+      "result06s00", "result06s01", "result06",
+      "result07s00", "result07"
+   ],
 	matcher: /(r\d+b\d)\.json/,
 	# matcher: /(r2b1)\.json/,
 }
 
-result = { cast: 0, pursuit: 0 }
-n = 0
+def flatten_effect2(effect)
+	ret = [effect]
+	effect[:triggers]&.each do |trigger|
+		ret += flatten_effect(trigger)
+	end
+	ret
+end
+
+def flatten_effect(ba)
+	ret = []
+	ba[:effects]&.each do |effect|
+		ret += flatten_effect2(effect)
+	end
+	ba[:triggers]&.each do |trigger|
+		ret += flatten_effect(trigger)
+	end
+	return ret
+end
+
+result = {}
 search_config[:versions].each do |version|
    /result(\d+(s\d+)?)/.match(version)
    v = $1
@@ -25,34 +49,26 @@ search_config[:versions].each do |version|
 
          # p root_dir, fname
 
-         players = {}
-         game[:players].each do |player|
-            players[player[:name]] = player
-         end
-         teams = {}
-
-         passive_count = Hash.new(0)
-
-         game[:beginning_phase][:equips]&.each do |equip|
-            passive_count[equip[:player]] += 1 if equip[:effect1] == '追撃10'
-            passive_count[equip[:player]] += 1 if equip[:effect2] == '追撃10'
-            passive_count[equip[:player]] += 1 if equip[:effect3] == '追撃10'
-         end
+         decrease_eyes_count = Hash.new(0)
+         increase_eyes_count = Hash.new(0)
 
          game[:events].each do |event|
             next unless event[:type] == 'battle_action'
-            if ['Normal', 'Special'].include?(event[:subtype])
-               result[:cast] += passive_count[event[:declarer]]
+            if event[:skill_name] == 'ディクリースアイズ'
+               decrease_eyes_count[event[:declarer]] += 1
             end
-            event[:effects]&.each do |effect|
-               if effect[:type] == 'inc_passive' && effect[:passive] =='自滅'
-                  passive_count[effect[:target]] = 1
-               end
+            if event[:skill_name] == 'インクリースアイズ'
+               increase_eyes_count[event[:declarer]] += 1
             end
-            event[:pre_triggers]&.each do |trigger|
-               if /自滅LV(\d+)/.match(trigger[:skill_name])
-                  p $1
-                  result[:pursuit] += 1
+            flatten_effect(event).each do |effect|
+               if ['dice_roll_over', 'dice_roll_under'].include?(effect[:type])
+                  dec = decrease_eyes_count[event[:declarer]]
+                  inc = increase_eyes_count[event[:declarer]]
+                  key = "#{dec}-#{inc}"
+                  result[key] = Hash.new(0) unless result[key]
+                  result[key][effect[:actual1]] += 1
+                  result[key][effect[:actual2]] += 1
+                  result[key][effect[:actual3]] += 1
                end
             end
          end
@@ -60,8 +76,6 @@ search_config[:versions].each do |version|
    end
 end
 
-cast = result[:cast]
-pursuit = result[:pursuit]
-pursuit_rate = 100.0 * pursuit / cast
-
-puts "#{sprintf("%.2f", pursuit_rate)}% (#{pursuit}/#{cast})"
+result.each do |skill_stack, x|
+   puts "#{skill_stack}: #{x}"
+end

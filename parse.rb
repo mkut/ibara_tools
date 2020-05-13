@@ -167,6 +167,8 @@ class Parser
 			{ type: 'steal_max_stat', target: $1, stat: 'HP', amount_max: $2.to_i, amount_current: $3.to_i }
 		when /(.+)からMSPを (\d+) 奪取！SPを (\d+) 奪取！/
 			{ type: 'steal_max_stat', target: $1, stat: 'SP', amount_max: $2.to_i, amount_current: $3.to_i }
+		when /(.+)から(AT|DF|DX|AG|HL|LK|.+特性|.+耐性|HATE)を奪取！/
+			{ type: 'steal_stat', target: $1, stat: $2 }
 		when /(.+)に(HP|SP)を (\d+) 譲渡！/
 			{ type: 'give_stat', target: $1, stat: $2, amount: $3.to_i }
 		when /(.+)から(.*)へ、MHP (\d+)  MSP (\d+) が分け与えられた！/
@@ -175,6 +177,8 @@ class Parser
 			{ type: 'buff_stat', target: $2, stat: $3, duration: $1.to_i, amount: $4.to_i }
 		when /(\d+) ターンの間、(.+)は ?(AT|DF|DX|AG|HL|LK|.+特性|.+耐性|HATE)(\d+)％弱化！/
 			{ type: 'debuff_stat', target: $2, stat: $3, duration: $1.to_i, amount: $4.to_i }
+		when /(\d+) ターンの間、(.+)の射程が (\d+) 増加！/
+			{ type: 'buff_stat', target: $2, stat: '射程', duration: $1.to_i, amount: $3.to_i }
 		when /(.+)の(AT|DF|DX|AG|HL|LK|.+特性|.+耐性|HATE)(\d+)％強化が残り (\d+) ターンに延長！/
 			{ type: 'extend_buff_stat', target: $1, stat: $2, duration: $4.to_i, amount: $3.to_i }
 		when /(.+)の(AT|DF|DX|AG|HL|LK|.+特性|.+耐性|HATE)(\d+)％弱化が残り (\d+) ターンに延長！/
@@ -239,8 +243,10 @@ class Parser
 			{ type: 'inc_skill_charge', target: $1, skill_name: $2, amount: $3.to_i }
 		when /(.+)の総行動数が (\d+) になった！/
 			{ type: 'set_action_count', target: $1, amount: $3.to_i }
-		when /（目標値(\d+)以上 ･･･ \d ?\d ?\d = (\d+) ：(成功|失敗)！）/
-			{ type: 'dice_roll', goal: $1.to_i, actual: $2.to_i, is_succeeded: $3 == '成功' }
+		when /（目標値(\d+)以上 ･･･ (\d) ?(\d) ?(\d) = (\d+) ：(成功|失敗)！）/
+			{ type: 'dice_roll_over', goal: $1.to_i, actual1: $2.to_i, actual2: $3.to_i, actual3: $4.to_i, actual:$5.to_i, is_succeeded: $6 == '成功' }
+		when /（目標値(\d+)以下 ･･･ (\d) ?(\d) ?(\d) = (\d+) ：(成功|失敗)！）/
+			{ type: 'dice_roll_under', goal: $1.to_i, actual1: $2.to_i, actual2: $3.to_i, actual3: $4.to_i, actual:$5.to_i, is_succeeded: $6 == '成功' }
 		when /(.+)は自身のスキル･付加効果内のダイス目が高めになった！/
 			{ type: 'enhance_dice', target: $1 }
 		when /(.+)は自身のスキル･付加効果内のダイス目が低めになった！/
@@ -251,12 +257,18 @@ class Parser
 			{ type: 'summon_failed', target: $1 }
 		when /(.+)にビーフを投げつけた！/
 			{ type: 'summon_beef', target: $1 }
+		when /(.+)にねばねばを投げつけた！/
+			{ type: 'summon_beef', target: $1 } # エラー
 		when /(.+)にビーフを投げつけたがもう受け取ってくれない！/
 			{ type: 'summon_beef_failed', target: $1 }
+		when /(.+)にねばねばを投げつけたがもう受け取ってくれない！/
+			{ type: 'summon_beef_failed', target: $1 } # エラー
 		when /(.+)が発動する「(.*)」効果が強化！/
-			{ type: 'enhance_skill', target: $1, skill_type: $2 }
+			{ type: 'enhance_skill_effect', target: $1, skill_type: $2 }
 		when /(.+)が発動する「(.*)」効果が弱化！/
-			{ type: 'weaken_skill', target: $1, skill_type: $2 }
+			{ type: 'weaken_skill_effect', target: $1, skill_type: $2 }
+		when /(.+)の (.+) が強化！/
+			{ type: 'enhance_skill', target: $1, skill_name: $2 }
 		when /(.+)は他者から炎上を移される確率が低下！/
 			{ type: 'protect_debuff', target: $1, tag: '炎上' }
 		when /(.+)は凍結によるHP･SP減少量が低下！/
@@ -281,10 +293,16 @@ class Parser
 			{ type: 'special_passive', target: $1, passive: '魅惑' }
 		when /(.+)の召喚するNPCが強化！/
 			{ type: 'special_passive', target: $1, passive: '召喚強化' }
+		when /(.+)の必殺スキルが強化！/
+			{ type: 'special_passive', target: $1, passive: '詠唱追加' }
+		when /(.+)は火撃に限り、他者に炎上を移す確率が射程に関わらず上昇！/
+			{ type: 'special_passive', target: $1, tag: '熱唱' }
 		when /(.+)には何の効果もなかった！/ # アゲンスト
 			{ type: 'no_effect', target: $1, subtype: 1 }
 		when /(.+)には効果がなかった！/ # 転移門
 			{ type: 'no_effect', target: $1, subtype: 2 }
+		when /(.+)には「(.*)」を含むアクティブスキル設定がない！/ # クリエイト：メディカルリキッド
+			{ type: 'no_effect', target: $1, skill_name_filter: $2 }
 		else
 			error([], "unknown effect: #{raw_text}")
 			{ type: 'unknown', text: raw_text }
@@ -905,6 +923,8 @@ class Parser
 				return { type: :ooc, reason: :absent_owner, amount: $1.to_i }
 			when /要求SP不足により暴走しかけたが堪えた！/
 				return { type: :resist_ooc, reason: :short_sp }
+			when /主人不在により暴走しかけたが堪えた！/
+				return { type: :resist_ooc, reason: :absent_owner }
 			when /(朦朧)によりSPに  のダメージ！/
 				return { type: :buff_battle_effect, buff: $1, sp_damage: 0 } # 02s00でのバグったログ
 			else
@@ -1038,6 +1058,9 @@ class Parser
 			return nil
 		when NodeProc::of('img', ['TN0', 'TN1', 'TN2', 'TN3', 'TN4', 'TN5', 'TN6', 'TN7', 'TN8', 'TN9'])
 			# turn number
+			return nil
+		when NodeProc::of('span', ['O3', 'R3'])
+			# check point
 			return nil
 		when NodeProc::of('div', 'CL')
 			# ???
