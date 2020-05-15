@@ -199,7 +199,7 @@ export default class NewTrade extends React.Component {
             );
             trs.push(
                <tr key="targetEno">
-                  <th>誰に(ENO)</th>
+                  <th>誰に</th>
                   <td><PlayerSelector value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
@@ -213,13 +213,13 @@ export default class NewTrade extends React.Component {
          case 'PS送付':
             trs.push(
                <tr key="eno">
-                  <th>誰が(ENO)</th>
+                  <th>誰が</th>
                   <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
                <tr key="targetEno">
-                  <th>誰に(ENO)</th>
+                  <th>誰に</th>
                   <td><PlayerSelector value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
@@ -248,7 +248,7 @@ export default class NewTrade extends React.Component {
          case '付加':
             trs.push(
                <tr key="eno">
-                  <th>誰が(ENO)</th>
+                  <th>誰が</th>
                   <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
@@ -275,7 +275,7 @@ export default class NewTrade extends React.Component {
          case '料理':
             trs.push(
                <tr key="eno">
-                  <th>誰が(ENO)</th>
+                  <th>誰が</th>
                   <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
@@ -296,7 +296,7 @@ export default class NewTrade extends React.Component {
          case 'アイテム送付(外部から)':
             trs.push(
                <tr key="eno">
-                  <th>誰が(ENO)</th>
+                  <th>誰が</th>
                   <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
