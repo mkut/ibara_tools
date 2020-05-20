@@ -14,8 +14,8 @@ search_config = {
 	# matcher: /(r2b1)\.json/,
 }
 
-def flatten_effect2(effect)
-	ret = [effect]
+def flatten_effect2(effect, source)
+	ret = [{effect: effect, source: source}]
 	effect[:triggers]&.each do |trigger|
 		ret += flatten_effect(trigger)
 	end
@@ -25,13 +25,16 @@ end
 def flatten_effect(ba)
 	ret = []
 	ba[:effects]&.each do |effect|
-		ret += flatten_effect2(effect)
+		ret += flatten_effect2(effect, ba)
 	end
 	ba[:triggers]&.each do |trigger|
 		ret += flatten_effect(trigger)
 	end
 	return ret
 end
+
+dmg_sum = 0
+cnt = 0
 
 result = {}
 search_config[:versions].each do |version|
@@ -49,33 +52,39 @@ search_config[:versions].each do |version|
 
          # p root_dir, fname
 
-         decrease_eyes_count = Hash.new(0)
-         increase_eyes_count = Hash.new(0)
+         sim = Simulator.new
+
+         game[:beginning_phase][:players].each {|player| sim.apply_player_join(player) }
+         game[:beginning_phase][:equips]&.each {|equip| sim.apply_equip(equip) }
+         game[:beginning_phase][:events]&.each {|event| sim.apply_event(event) }
 
          game[:events].each do |event|
-            next unless event[:type] == 'battle_action'
-            if event[:skill_name] == 'ディクリースアイズ'
-               decrease_eyes_count[event[:declarer]] += 1
-            end
-            if event[:skill_name] == 'インクリースアイズ'
-               increase_eyes_count[event[:declarer]] += 1
-            end
-            flatten_effect(event).each do |effect|
-               if ['dice_roll_over', 'dice_roll_under'].include?(effect[:type])
-                  dec = decrease_eyes_count[event[:declarer]]
-                  inc = increase_eyes_count[event[:declarer]]
-                  key = "#{dec}-#{inc}"
-                  result[key] = Hash.new(0) unless result[key]
-                  result[key][effect[:actual1]] += 1
-                  result[key][effect[:actual2]] += 1
-                  result[key][effect[:actual3]] += 1
+            prev_dmg_e = {}
+            flatten_effect(event).each do |e|
+               effect = e[:effect]
+               source = e[:source]
+               if ['damage', 'sp_damage', 'mixed_damage'].include?(effect[:type])
+                  prev_dmg_e = e
+               elsif effect[:type] == 'spread_debuff'
+                  attack = effect[:target] == prev_dmg_e[:effect][:target]
+                  target = sim.players[effect[:target]]
+                  declarer = sim.players[source[:declarer]]
+                  if target && declarer && (target.range != 1 || declarer.range != 1)
+                     p root_dir, fname
+                     puts "#{declarer.name} - #{target.name}"
+                     puts "#{declarer.range} - #{target.range}"
+                  end
                end
             end
+            sim.apply_event(event)
          end
       end
    end
 end
 
-result.each do |skill_stack, x|
-   puts "#{skill_stack}: #{x}"
-end
+ave = dmg_sum / (cnt * 0.5)
+puts ave
+
+# result.each do |skill_stack, x|
+#    puts "#{skill_stack}: #{x}"
+# end
