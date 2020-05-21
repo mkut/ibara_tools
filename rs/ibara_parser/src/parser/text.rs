@@ -1,26 +1,20 @@
 extern crate scraper;
 
-use std::iter::{Iterator, Peekable};
 use scraper::Node;
-use ego_tree::NodeRef;
+use ego_tree::iter::Children;
+use crate::data::peekable::Peekable;
+use crate::parser::combinator::repeated::repeated;
 
-pub fn try_parse<'a, T: Iterator<Item=NodeRef<'a, Node>>>(cursor: &mut Peekable<T>) -> Option<String> {
-   return match cursor.peek()?.value() {
-      Node::Text(t) => {
-         cursor.next();
-         return Some(format!("<{}>", t.text));
+pub fn parse(cursor: &mut Peekable<Children<Node>>) -> Result<String, String> {
+   match cursor.next() {
+      Some(val) => match val.value() {
+         Node::Text(t) => Ok(format!("{}", t.text)),
+         _ => Err("Unexpected node is found, but text node is expected.".to_string())
       },
-      _ => None,
-   };
+      None => Err("Next node is not found, but text node is expected.".to_string()),
+   }
 }
 
-pub fn skip_text<'a, T: Iterator<Item=NodeRef<'a, Node>>>(cursor: &mut Peekable<T>) -> Option<()> {
-   loop {
-      let done = try_parse(cursor);
-      match done {
-         None => break,
-         Some(text) => println!("{}", text),
-      }
-   }
-   return Some(());
+pub fn skip_text(cursor: &mut Peekable<Children<Node>>) -> () {
+   repeated(&parse, cursor);
 }
