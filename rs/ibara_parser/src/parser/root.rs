@@ -1,17 +1,19 @@
 extern crate scraper;
 
-use scraper::ElementRef;
-use crate::data::peekable::Peekable;
+use scraper::Node;
+use ego_tree::iter::Children;
+use crate::data::traceable::Traceable;
 use crate::parser::beginning;
 
 /*
  * ROOT
- *  => div.MXM > BEGINNING TURN* ENDING BR*
+ *  => BEGINNING
+ *     TURN*
+ *     ENDING
+ *     BR*
  */
-pub fn parse(eref: &ElementRef) -> Result<String, String> {
-   let mut children = eref.children();
-   let mut cursor = Peekable::new(&mut children);
-   let result = beginning::parse(&mut cursor)?;
+pub fn parse(cursor: &mut Traceable<Children<Node>>) -> Result<String, String> {
+   let result = beginning::parse(cursor)?;
 
    return Ok(result);
 }
