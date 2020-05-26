@@ -100,7 +100,7 @@ export const players = [{
       { name: '形のいい軽盾', type: 'equipment', special: true },
       { name: '墨流しの篭手', type: 'equipment' },
       { name: '青碧のペンダント', type: 'equipment' },
-      { name: 'ラタトゥイユ', type: 'food' },
+      { name: 'ラタトゥイユ', type: 'dish' },
       { name: '爪', type: 'material' },
       { name: '不浄返しのゴアブーツ', type: 'equipment' },
       { name: '懐刀', type: 'equipment' },

@@ -36,6 +36,7 @@ end
 
 result = { total_damage: 0, hit: 0, total_effect: 0, total_trigger: 0, total_skill_use: 0 }
 result2 = {}
+result3 = { total_trigger: 0, total_skill_use: 0 }
 search_config[:versions].each do |version|
    /result(\d+(s\d+)?)/.match(version)
    v = $1
@@ -63,26 +64,27 @@ search_config[:versions].each do |version|
          game[:events].each do |event|
             if ['Normal', 'Special'].include?(event[:subtype]) && event[:skill_name] != '通常攻撃'
                declarer = event[:declarer]
-               local_result[declarer] = { skill_use: 0, skill_use_after: 0, trigger: 0, trigger_after: 0 } unless local_result[declarer]
+               local_result[declarer] = { skill_use: 0, skill_use_after: Hash.new(0), trigger: Hash.new(0), trigger_after: Hash.new(0) } unless local_result[declarer]
                local_result[declarer][:skill_use] += 1
-               local_result[declarer][:skill_use_after] += 1 if state[declarer]
+               local_result[declarer][:skill_use_after][state[declarer][:level]] += 1 if state[declarer]
+               result3[:total_skill_use] += 1 if declarer.match(/^こぐま/)
                event[:triggers]&.each do |trigger|
-                  if trigger[:skill_name].match(/追撃LV(\d+)/)
+                  if trigger[:skill_name].match(/強撃LV(\d+)/)
                      lv = $1.to_i
+                     result3[:total_trigger] += 1 if declarer.match(/^こぐま/)
                      if state[declarer] && state[declarer][:level] == lv
-                        local_result[declarer][:trigger_after] += 1
+                        local_result[declarer][:trigger_after][lv] += 1
                      else
-                        local_result[declarer][:trigger] += 1
+                        local_result[declarer][:trigger][lv] += 1
                      end
                      trigger[:effects]&.each do |effect|
-                        result2[lv] = { total_damage: 0, hit: 0, total_effect: 0 } unless result2[lv]
                         if effect[:type] == 'damage'
-                           result2[lv][:total_damage] += effect[:amount]
-                           result2[lv][:hit] += 1
-                           result2[lv][:total_effect] += 1
-                           puts "#{lv},#{effect[:amount]}"
+                           result[:total_damage] += effect[:amount]
+                           result[:hit] += 1
+                           result[:total_effect] += 1
+                           # puts "#{lv},#{effect[:amount]}"
                         elsif effect[:type] == 'evade'
-                           result2[lv][:total_effect] += 1
+                           result[:total_effect] += 1
                         else
                            # puts effect[:type]
                         end
@@ -94,7 +96,7 @@ search_config[:versions].each do |version|
             flatten_effect(event).each do |e|
                effect = e[:effect]
                source = e[:source]
-               if effect[:type] == 'inc_passive' && effect[:passive] == '追撃'
+               if effect[:type] == 'inc_passive' && effect[:passive] == '強撃'
                   target = effect[:target]
                   level = effect[:level]
                   state[target] = { level: 0 } unless state[target]
@@ -105,13 +107,15 @@ search_config[:versions].each do |version|
             # sim.apply_event(event)
          end
          local_result.each do |p, lr|
-            if lr[:trigger] > 0
-               result[:total_skill_use] += lr[:skill_use]
-               result[:total_trigger] += lr[:trigger]
-            end
-            if lr[:trigger_after] > 0
-               result[:total_skill_use] += lr[:skill_use_after]
-               result[:total_trigger] += lr[:trigger_after]
+            # lr[:trigger].each do |lv, trigger_count|
+            #    result2[lv] = { total_skill_use: 0, total_trigger: 0 } unless result2[lv]
+            #    result2[lv][:total_skill_use] += lr[:skill_use]
+            #    result2[lv][:total_trigger] += trigger_count
+            # end
+            lr[:skill_use_after].each do |lv, skill_use|
+               result2[lv] = { total_skill_use: 0, total_trigger: 0 } unless result2[lv]
+               result2[lv][:total_skill_use] += skill_use
+               result2[lv][:total_trigger] += lr[:trigger_after][lv]
             end
          end
 
@@ -119,18 +123,21 @@ search_config[:versions].each do |version|
    end
 end
 
-trigger_rate = 100.0 * result[:total_trigger] / result[:total_skill_use]
+# trigger_rate = 100.0 * result[:total_trigger] / result[:total_skill_use]
+# hit_rate = 100 * result[:hit] / result[:total_effect]
+# average_damage = 1.0 * result[:total_damage] / result[:hit]
+# expected_damage = average_damage * hit_rate / 100 * trigger_rate / 100
 
-puts "Trigger: #{result[:total_trigger]} / #{result[:total_skill_use]} #{sprintf("%.2f", trigger_rate)}%"
+# puts "発動率: #{result[:total_trigger]} / #{result[:total_skill_use]} #{sprintf("%.2f", trigger_rate)}%"
+# puts "命中率: #{result[:hit]} / #{result[:total_effect]} #{sprintf("%.2f", hit_rate)}%"
+# puts "平均ダメージ: #{sprintf("%.2f", average_damage)}"
+# puts "ダメージ期待値: #{sprintf("%.2f", expected_damage)}"
 
-result2.each do |lv, r|
-   hit_rate = 100 * r[:hit] / r[:total_effect]
-   average_damage = 1.0 * r[:total_damage] / r[:hit]
-   puts "Lv: #{lv}"
-   puts "Hit: #{r[:hit]} / #{r[:total_effect]} #{sprintf("%.2f", hit_rate)}%"
-   puts "Damage: #{average_damage}"
-end
-
-# result.each do |skill_stack, x|
-#    puts "#{skill_stack}: #{x}"
+# result2.each do |lv, r|
+#    trigger_rate = 100.0 * r[:total_trigger] / r[:total_skill_use]
+#    puts "Lv #{lv}"
+#    puts "発動率: #{r[:total_trigger]} / #{r[:total_skill_use]} #{sprintf("%.2f", trigger_rate)}%"
 # end
+
+trigger_rate = 100.0 * result3[:total_trigger] / result3[:total_skill_use]
+puts "発動率: #{result3[:total_trigger]} / #{result3[:total_skill_use]} #{sprintf("%.2f", trigger_rate)}%"
