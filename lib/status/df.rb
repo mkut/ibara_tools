@@ -31,7 +31,12 @@ module Status
             skill_name: "#{equip[:type]}#{equip[:power]}"
          })
          return unless @expected && @base
-         @expected += (equip[:power] / 5 + 3) * 2
+         power_to_status = {10 => 5, 15 => 6, 17 => 6, 20 => 7, 30 => 9, 35 => 10, 40 => 11, 55 => 13, 67 => 15, 75 => 16, 90 => 18, 100 => 19, 150 => 25, 180 => 28}
+         if power_to_status[equip[:power]]
+            @expected += power_to_status[equip[:power]] * 2
+         else
+            @expected = nil
+         end
       end
    end
 end

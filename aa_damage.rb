@@ -3,7 +3,15 @@ require_relative 'lib/simulator'
 
 search_config = {
 	root_dir: "../release",
-	dir_names: ["result02", "result02s00", "result02s01", "result03", "result03s00"],
+   dir_names: [
+      "result02s00", "result02s01", "result02",
+      "result03s00", "result03",
+      "result04s00", "result04",
+      "result05s00", "result05",
+      # "result06s00", "result06s01", "result06",
+      # "result07s00", "result07",
+      # "result08",
+   ],
 	matcher: /(r\d+b\d)\.json/,
 	# matcher: /(r1508b3)\.json/,
 }
@@ -68,10 +76,10 @@ root_dirs.each do |root_dir|
                      params = [
                         "射程#{range}",
                         out_of_range > 0 ? "射程外#{out_of_range}" : nil,
-                        "AT#{at.expected}#{at_buff > 0 ? "+#{at_buff}%" : at_buff < 0 ? "#{at_buff}%" : ''}",
-                        # "#{at}#{at_buff > 0 ? "+#{at_buff}%" : at_buff < 0 ? "#{at_buff}%" : ''}",
-                        "DF#{df.expected}#{df_buff > 0 ? "+#{df_buff}%" : df_buff < 0 ? "#{df_buff}%" : ''}",
-                        # "DF#{df}#{df_buff > 0 ? "+#{df_buff}%" : df_buff < 0 ? "#{df_buff}%" : ''}",
+                        # "AT#{at.expected}#{at_buff > 0 ? "+#{at_buff}%" : at_buff < 0 ? "#{at_buff}%" : ''}",
+                        "#{at}#{at_buff > 0 ? "+#{at_buff}%" : at_buff < 0 ? "#{at_buff}%" : ''}",
+                        # "DF#{df.expected}#{df_buff > 0 ? "+#{df_buff}%" : df_buff < 0 ? "#{df_buff}%" : ''}",
+                        "#{df}#{df_buff > 0 ? "+#{df_buff}%" : df_buff < 0 ? "#{df_buff}%" : ''}",
                         affinities.map(&:to_s),
                         resistances.map(&:to_s),
                         declarer.buffs['麻痺'] > 0 ? '麻痺' : nil,
@@ -85,10 +93,10 @@ root_dirs.each do |root_dir|
                         critical > 0 ? "Crit#{critical}" : nil,
                      ].flatten.compact
                      key = params.join(' ')
-                     next unless at.expected == 192 && df.expected == 115
+                     # next unless at.expected == 192 && df.expected == 115
                      result[key] = Hash.new(0) unless result[key]
                      result[key][damage] += 1
-                     if key == "射程1 192 115"
+                     if key == "射程1 AT136(武器10(+5)/猛攻) DF125(防具10)"
                         STDERR.puts "A #{damage} #{root_dir}/#{fname}"
                      end
                   end
@@ -101,5 +109,9 @@ root_dirs.each do |root_dir|
 end
 
 result.each do |key, x|
-   puts "#{key}: #{x.to_s}"
+   r = ""
+   x.keys.sort.each do |dmg|
+      r += "#{dmg}=>#{x[dmg]}, "
+   end
+   puts "#{key}: #{r}" if x.size > 9
 end

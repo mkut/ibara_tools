@@ -3,7 +3,7 @@ require_relative 'lib/simulator'
 
 search_config = {
 	root_dir: "../release",
-	dir_names: ["result02", "result02s00", "result02s01", "result03", "result03s00"],
+	dir_names: ["result08"],
 	matcher: /(r\d+b\d)\.json/,
 	# matcher: /(r1508b3)\.json/,
 }
@@ -38,7 +38,7 @@ root_dirs.each do |root_dir|
          teams = {}
 
          game[:events].each do |event|
-            if event[:type] == 'battle_action'
+            if event[:type] == 'battle_action' && event[:declarer]
                sim.apply_event_only_buff(event)
                declarer_name = event[:declarer]
                declarer = sim.players[declarer_name]
@@ -93,6 +93,7 @@ root_dirs.each do |root_dir|
                      result[key][heal] += 1
 
                      next if target.buffs['腐食'] > 0
+                     next unless df.expected > 200
                      puts "#{hl.expected*(1+0.01*hl_buff)}\t#{df.expected*(1+0.01*df_buff)}\t#{base_heal_power}\t#{heal}"
                   end
                end

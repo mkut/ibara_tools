@@ -157,7 +157,7 @@ class Simulator
          apply_event_only_buff(event)
          declarer = @players[event[:declarer]]
          flatten_effects_in_event(event).each do |effect|
-            next unless @players[effect[:target]]
+            # next unless @players[effect[:target]]
             case effect
             when Effect::Proc.of_type('summon')
                @players[effect[:target]] = Player.new(effect[:target], 'エイド', declarer.zone, true) # TODO 正しい隊列が分からない

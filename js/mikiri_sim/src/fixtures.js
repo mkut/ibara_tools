@@ -1,4 +1,4 @@
-import { players } from './fixtures/players_8';
+import { players } from './fixtures/players_9';
 
 export { players };
 
