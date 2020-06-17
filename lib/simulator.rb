@@ -156,6 +156,7 @@ class Simulator
       elsif event[:type] == 'battle_action'
          apply_event_only_buff(event)
          declarer = @players[event[:declarer]]
+         prev_target = nil
          flatten_effects_in_event(event).each do |effect|
             # next unless @players[effect[:target]]
             case effect
@@ -204,7 +205,7 @@ class Simulator
                target = @players[effect[:target]]
                target.buffs[effect[:buff]] -= effect[:amount]
             when Effect::Proc.of_type('consume_buff')
-               declarer.buffs[effect[:buff]] -= effect[:amount]
+               prev_target.buffs[effect[:buff]] -= effect[:amount]
             when Effect::Proc.of_type('steal_buff')
                target = @players[effect[:target]]
                target.buffs[effect[:buff]] -= effect[:amount]
@@ -248,6 +249,8 @@ class Simulator
                   stat_buffs: effect[:stat_buffs],
                })
             end
+
+            prev_target = @players[effect[:target]]
          end
       end
    end

@@ -4,7 +4,7 @@ require_relative 'lib/simulator'
 search_config = {
 	root_dir: "../release",
 	versions: [
-      "result08",
+      "result09",
    ],
 	matcher: /(r\d+b3)\.json/,
 	# matcher: /(r2b1)\.json/,
