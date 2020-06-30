@@ -50,7 +50,7 @@ for eno in config[:target_enos] do
          item_name = row.children[1].content
          item_type = convert_item_type(row.children[2].content)
          special_item = !row.children[0].attribute('style').nil?
-         player[:items][item_no - 1] = { name: item_name, type: item_type, special: special_item }
+         player[:items][item_no - 1] = item_name.strip == "" ? nil : { name: item_name, type: item_type, special: special_item }
       end
       players.push(player)
 	rescue => e
