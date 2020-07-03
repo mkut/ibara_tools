@@ -118,7 +118,6 @@ export default class Trades extends React.Component {
 
    handleToggleShowRelated(e) {
       const showRelated = e.target.checked;
-      console.log(showRelated);
       this.setState({ showRelated });
    }
 
