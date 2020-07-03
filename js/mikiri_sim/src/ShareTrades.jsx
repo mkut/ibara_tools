@@ -23,11 +23,11 @@ export function sanitize(trades) {
    return ret;
 }
 
-export default function ShareTrades(trades, onChangeTrades) {
+export default function ShareTrades(props) {
    if (db) {
-      return <ShareTradesWithFirestore trades={trades} onChangeTrades={onChangeTrades} />
+      return <ShareTradesWithFirestore trades={props.trades} onChangeTrades={props.onChangeTrades} />
    } else {
-      return <ShareTradesWithoutFirestore trades={trades} onChangeTrades={onChangeTrades} />
+      return <ShareTradesWithoutFirestore trades={props.trades} onChangeTrades={props.onChangeTrades} />
    }
 }
 
