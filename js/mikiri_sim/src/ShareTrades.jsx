@@ -1,6 +1,7 @@
 import React from 'react'
 import {idmax} from './NewTrade';
 import {db} from './firebase';
+import {formatDate} from './date';
 
 export function sanitize(trades) {
    const ids = [];
@@ -83,8 +84,12 @@ class ShareTradesWithFirestore extends React.Component {
    }
 
    componentDidMount() {
-      const revisions = [];
+      this.loadRevisions();
+   }
+
+   loadRevisions() {
       db.collection("trades").get().then((querySnapshot) => {
+         const revisions = [];
          querySnapshot.forEach((doc) => {
             revisions.push(doc.id);
          });
@@ -99,7 +104,7 @@ class ShareTradesWithFirestore extends React.Component {
          .set({
             data: this.props.trades,
          })
-         .then(() => console.log('Document written.'));
+         .then(() => this.loadRevisions());
    }
 
    handleImport() {
@@ -138,6 +143,7 @@ class ShareTradesWithFirestore extends React.Component {
                   {this.state.revisions.map(rev => <option value={rev} key={rev}>{rev}</option>)}
                </select>
                <button onClick={this.handleImport.bind(this)}>サーバーからインポート</button>
+               {this.state.error && <div style={{color: 'red'}}>{this.state.error}</div>}
             </div>
             <button onClick={this.handleReset.bind(this)}>リセット</button>
          </div>
