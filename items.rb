@@ -18,7 +18,7 @@ end
 config = {
 	root_dir: "../release",
    target_enos: [370, 421, 730, 784, 987, 1013],
-	dir_name: "result11",
+	dir_name: "result12",
 }
 
 players = []
