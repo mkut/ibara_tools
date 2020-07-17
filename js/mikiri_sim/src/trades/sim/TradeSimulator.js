@@ -1,3 +1,5 @@
+import { isFood, isDish, isEquipment } from '../../gamedata/ItemTypes';
+
 export class TradeSimulator {
    constructor(players) {
       this.state = {};
@@ -121,7 +123,7 @@ export class TradeSimulator {
             warning: '存在しないアイテムを食事',
          }
       }
-      if (item.type !== 'dish' && item.type !== 'food') {
+      if (!isDish(item.type) && !isFood(item.type)) {
          return {...trade,
             item: item,
             warning: '食べられないアイテムを食事',
@@ -130,7 +132,7 @@ export class TradeSimulator {
       player.items[trade.itemId - 1] = null;
       return {...trade,
          item: item,
-         warning: item.type === 'food' ? '調理前のアイテムを食事' : null,
+         warning: isFood(item.type) ? '調理前のアイテムを食事' : null,
       }
    }
 
@@ -207,7 +209,7 @@ export class TradeSimulator {
          }
       }
       targetPlayer.items[trade.itemId - 1] = {
-         type: 'material',
+         type: '素材', // TODO 食材にもなりうる
          name: `合成品(${item.name}+${item2.name})`,
          special: item.special || item2.special,
       };
@@ -231,14 +233,14 @@ export class TradeSimulator {
             warning: '存在しないアイテムで作製',
          }
       }
-      if (item.type !== 'material') {
+      if (item.type !== '素材') {
          return {...trade,
             item: item,
             warning: '素材でないアイテムで作製',
          };
       }
       targetPlayer.items[trade.itemId - 1] = {
-         type: 'equipment',
+         type: trade.itemType,
          name: `作製品(${item.name})`,
          special: item.special,
       };
@@ -260,14 +262,14 @@ export class TradeSimulator {
             warning: '存在しないアイテムで料理',
          }
       }
-      if (item.type !== 'food') {
+      if (!isFood(item.type)) {
          return {...trade,
             item: item,
             warning: '食材でないアイテムで料理',
          };
       }
       targetPlayer.items[trade.itemId - 1] = {
-         type: 'equipment',
+         type: '料理',
          name: `料理(${item.name})`,
          special: item.special,
       };
@@ -292,7 +294,7 @@ export class TradeSimulator {
             warning: '存在しないアイテムに付加',
          }
       }
-      if (item.type !== 'equipment') {
+      if (!isEquipment(item.type)) {
          return {...trade,
             item: item,
             item2: item2,
@@ -306,7 +308,7 @@ export class TradeSimulator {
             warning: '存在しないアイテムを付加',
          }
       }
-      if (item2.type !== 'material') {
+      if (!isMaterial(item2.type)) {
          return {...trade,
             item: item,
             item2: item2,
@@ -314,7 +316,7 @@ export class TradeSimulator {
          };
       }
       targetPlayer.items[trade.itemId - 1] = {
-         type: 'equipment',
+         type: item.type,
          name: `${item.name}+付加(${item2.name})`,
          special: item.special,
       };

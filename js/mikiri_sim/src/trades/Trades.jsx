@@ -3,7 +3,7 @@ import NewTrade from './NewTrade';
 import Trade from './Trade';
 import ShareTrades, { sanitize } from './ShareTrades';
 import { TradeSimulator } from './sim/TradeSimulator';
-import PlayerSelector from './form/PlayerSelector';
+import PlayerSelector from '../form/PlayerSelector';
 
 const options = ['アイテム破棄', ['アイテム手渡し', 'アイテム手渡し(外部から)'], '食事', 'PS送付', ['アイテム送付', 'アイテム送付(外部から)'], 'アイテム購入', '合成', '作製', '料理', '付加']
 
@@ -78,7 +78,6 @@ export default class Trades extends React.Component {
             this.changeTrades(sanitize(JSON.parse(tradesJson)));
          }
       }
-
    }
 
    changeTrades(newTrades) {

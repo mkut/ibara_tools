@@ -1,9 +1,10 @@
 import React from 'react'
-import PlayerSelector from './form/PlayerSelector';
-import ItemTypeSelector from './form/ItemTypeSelector';
-import NumberInput from './form/NumberInput';
-import TextInput from './form/TextInput';
-import ShopItemSelector from './form/ShopItemSelector';
+import PlayerSelector from '../form/PlayerSelector';
+import ItemTypeSelector from '../form/ItemTypeSelector';
+import NumberInput from '../form/NumberInput';
+import TextInput from '../form/TextInput';
+import ShopItemSelector from '../form/ShopItemSelector';
+import EquipmentTypeSelector from '../form/EquipmentTypeSelector';
 
 export const idmax = {
    value: 0,
@@ -75,6 +76,15 @@ export default class NewTrade extends React.Component {
             });
             break;
          case '作製':
+            this.props.onCreate({
+               type: this.props.type,
+               eno: this.state.eno,
+               targetEno: this.state.targetEno,
+               itemId: this.state.itemId,
+               itemType: this.state.itemType,
+               id: ++idmax.value,
+            });
+            break;
          case '料理':
             this.props.onCreate({
                type: this.props.type,
@@ -162,6 +172,7 @@ export default class NewTrade extends React.Component {
          case '付加':
             return this.state.eno && this.state.targetEno && this.state.itemId && this.state.itemId2;
          case '作製':
+            return this.state.eno && this.state.targetEno && this.state.itemId && this.state.itemType;
          case '料理':
             return this.state.eno && this.state.targetEno && this.state.itemId;
          case 'アイテム手渡し(外部から)':
@@ -272,6 +283,31 @@ export default class NewTrade extends React.Component {
             );
             break;
          case '作製':
+            trs.push(
+               <tr key="eno">
+                  <th>誰が</th>
+                  <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="targetEno">
+                  <th>誰の</th>
+                  <td><PlayerSelector value={this.state.targetEno} onChange={this.handleSetTargetEno.bind(this)} players={this.props.players} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="itemId">
+                  <th>何から(ItemID)</th>
+                  <td><NumberInput value={this.state.itemId} onChange={this.handleSetItemId.bind(this)} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="itemType">
+                  <th>何を(種類)</th>
+                  <td><EquipmentTypeSelector value={this.state.itemType} onChange={this.handleSetItemType.bind(this)} /></td>
+               </tr>
+            );
+            break;
          case '料理':
             trs.push(
                <tr key="eno">
@@ -291,7 +327,6 @@ export default class NewTrade extends React.Component {
                   <td><NumberInput value={this.state.itemId} onChange={this.handleSetItemId.bind(this)} /></td>
                </tr>
             );
-            break;
          case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             trs.push(

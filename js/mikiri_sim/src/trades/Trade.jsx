@@ -23,7 +23,7 @@ export default class Trade extends React.Component {
    }
 
    render() {
-      const { type, eno, targetEno, itemId, itemId2, shopItem, ps, warning, item, item2, targetItemId, itemName } = this.props.trade;
+      const { type, eno, targetEno, itemId, itemId2, shopItem, ps, warning, item, item2, targetItemId, itemName, itemType } = this.props.trade;
       let text = 'unknown trade type';
       switch (type) {
          case 'アイテム破棄':
@@ -111,7 +111,8 @@ export default class Trade extends React.Component {
                <span>
                   <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
                   <PlayerName eno={targetEno} players={this.props.players} target /> の&nbsp;
-                  <ItemName item={item} itemId={itemId} /> で作製する。
+                  <ItemName item={item} itemId={itemId} /> で&nbsp;
+                  <span className="item-type">{itemType}</span> を作製する。
                </span>
             );
             break;

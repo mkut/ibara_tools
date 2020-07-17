@@ -10,8 +10,6 @@
 }
 
 .trades {
-   border: 1px solid #121212;
-   border-radius: 10px 10px 10px 10px;
    padding: 10px 10px;
    margin: 10px 10px;
 }
@@ -62,7 +60,7 @@
    color: #7030d0;
 }
 
-.item-slot-name {
+.item-slot-name, .item-type {
    font-weight: bold;
 }
 
@@ -93,4 +91,53 @@
    color: red;
    font-weight: bold;
    text-decoration: underline;
+}
+
+.reqlv {
+   color: #557799;
+}
+
+.materials-pane {
+   padding: 10px 20px;
+   margin: 20px 0;
+}
+
+.materials-table {
+   border-collapse: collapse;
+}
+
+.materials-table tr {
+   border-bottom: 1px solid #303030;
+}
+
+.materials-table tr.material-row {
+   cursor: pointer;
+}
+
+.materials-table td, .materials-table th {
+   padding: 5px 10px 5px 10px;
+   text-align: center;
+}
+
+.equipment-group {
+   margin-bottom: 30px;
+}
+
+.equipments-table {
+   border-collapse: collapse;
+   margin-left: 40px;
+}
+
+.equipments-table tr {
+   border-bottom: 1px solid #303030;
+}
+
+.equipments-table td, .equipments-table th {
+   padding: 5px 10px 5px 10px;
+   text-align: center;
+}
+
+.item-type-header {
+   border-bottom: 1px solid #828282;
+   font-size: large;
 }

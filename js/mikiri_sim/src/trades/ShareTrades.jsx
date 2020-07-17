@@ -1,7 +1,7 @@
 import React from 'react'
 import {idmax} from './NewTrade';
-import {db} from './firebase';
-import {formatDate} from './date';
+import {db} from '../firebase';
+import {formatDate} from '../date';
 
 export function sanitize(trades) {
    const ids = [];
