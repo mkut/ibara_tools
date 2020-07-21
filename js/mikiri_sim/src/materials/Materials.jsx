@@ -51,6 +51,7 @@ class MaterialsMain extends React.Component {
                      <th>{this.props.itemType === '素材' ? '武器' : '効果1'}</th>
                      <th>{this.props.itemType === '素材' ? '防具' : '効果2'}</th>
                      <th>{this.props.itemType === '素材' ? '装飾' : '効果3'}</th>
+                     <th>合成強度</th>
                   </tr>
                </thead>
                <tbody>

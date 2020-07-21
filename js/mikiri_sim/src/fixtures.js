@@ -1,6 +1,9 @@
-import { players } from './fixtures/players_12_ex';
+// アイテムデータはこちらを利用しています。 https://docs.google.com/spreadsheets/d/1k8GHMcF4DUg_FdBr7mIdBmLEAw-EdOOKD6th7Im4frY
 
-export { players };
+import { players } from './fixtures/players_12_ex';
+const itemData = require('./fixtures/items.csv');
+
+export { players, itemData };
 
 export const shopItems = [
    { name: 'エナジー棒', type: '料理', price: 30, special: false, power: 10, effect1: { name: '活力', lv: 10 }, effect2: { name: '防御', lv: 10 } },

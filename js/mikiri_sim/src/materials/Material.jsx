@@ -1,6 +1,7 @@
 import React from 'react'
 import ItemEffect from '../common/ItemEffect';
 import Locations from './Locations';
+import { itemData } from '../fixtures';
 
 export default class Material extends React.Component {
    constructor(...args) {
@@ -26,6 +27,7 @@ export default class Material extends React.Component {
             <td><ItemEffect effect={this.props.data.item.effect1} /></td>
             <td><ItemEffect effect={this.props.data.item.effect2} /></td>
             <td><ItemEffect effect={this.props.data.item.effect3} /></td>
+            <td>{itemData.find(row => row['アイテム名'] === this.props.data.item.name)['可能強度範囲']}</td>
          </tr>
       );
       if (this.state.expanded) {
