@@ -1,4 +1,4 @@
-import { isFood, isDish, isEquipment } from '../../gamedata/ItemTypes';
+import { isFood, isDish, isEquipment, isMaterial } from '../../gamedata/ItemTypes';
 
 export class TradeSimulator {
    constructor(players) {
