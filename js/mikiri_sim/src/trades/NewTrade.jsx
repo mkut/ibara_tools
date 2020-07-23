@@ -327,6 +327,7 @@ export default class NewTrade extends React.Component {
                   <td><NumberInput value={this.state.itemId} onChange={this.handleSetItemId.bind(this)} /></td>
                </tr>
             );
+            break;
          case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             trs.push(
