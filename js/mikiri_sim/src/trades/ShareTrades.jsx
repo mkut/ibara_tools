@@ -2,6 +2,7 @@ import React from 'react'
 import {idmax} from './NewTrade';
 import {db} from '../firebase';
 import {formatDate} from '../date';
+import TextInput from '../form/TextInput';
 
 export function sanitize(trades) {
    const ids = [];
@@ -80,6 +81,7 @@ class ShareTradesWithFirestore extends React.Component {
       this.state = {
          revision: '',
          revisions: [],
+         revisionName: '',
       };
    }
 
@@ -89,11 +91,16 @@ class ShareTradesWithFirestore extends React.Component {
 
    loadRevisions() {
       db.collection("trades").get().then((querySnapshot) => {
-         const revisions = [];
+         const docs = [];
          querySnapshot.forEach((doc) => {
-            revisions.push(doc.id);
+            docs.push(doc);
          });
-         revisions.sort((a, b) => Number(b) - Number(a));
+         docs.sort((a, b) => Number(b.id) - Number(a.id));
+         const revisions = docs.slice(0, 5)
+            .map(doc => ({
+               id: doc.id,
+               name: doc.data().name,
+            }));
          this.setState({revisions});
       });
    }
@@ -103,12 +110,16 @@ class ShareTradesWithFirestore extends React.Component {
       db.collection('trades').doc(docId)
          .set({
             data: this.props.trades,
+            name: this.state.revisionName,
          })
          .then(() => this.loadRevisions());
+      this.setState({
+         revisionName: '',
+      });
    }
 
    handleImport() {
-      const revision = this.state.revision !== '' ? this.state.revision : this.state.revisions[0];
+      const revision = this.state.revision !== '' ? this.state.revision : this.state.revisions[0].id;
       db.collection("trades").doc(revision).get().then((doc) => {
          if (!doc.exists) {
             this.setState({
@@ -131,16 +142,20 @@ class ShareTradesWithFirestore extends React.Component {
       this.setState({revision: e.target.value});
    }
 
+   handleChangeRevisionName(revisionName) {
+      this.setState({revisionName});
+   }
+
    render() {
       return (
          <div className="share-trades">
             <div>
+               <TextInput value={this.state.revisionName} onChange={this.handleChangeRevisionName.bind(this)} />
                <button onClick={this.handleExport.bind(this)}>サーバーにエクスポート</button>
             </div>
             <div>
                <select value={this.state.revision} onChange={this.handleChangeRevision.bind(this)} >
-                  <option value="">最新</option>
-                  {this.state.revisions.map(rev => <option value={rev} key={rev}>{rev}</option>)}
+                  {this.state.revisions.map((rev, i) => <option value={rev.id} key={rev.id}>{i == 0 ? '[最新] ' : ''}{rev.name} ({rev.id})</option>)}
                </select>
                <button onClick={this.handleImport.bind(this)}>サーバーからインポート</button>
                {this.state.error && <div style={{color: 'red'}}>{this.state.error}</div>}

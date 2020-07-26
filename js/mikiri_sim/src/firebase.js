@@ -16,6 +16,20 @@ switch (location.host) {
       db = firebase.firestore();
       break;
    default:
+      // QA env
+      /*
+      firebase.initializeApp({
+         apiKey: "AIzaSyB_eGOY0COQtHQ74-Zcfsp2ALM3BwuUtvI",
+         authDomain: "ibara-tools-mikiri-sim-qa.firebaseapp.com",
+         databaseURL: "https://ibara-tools-mikiri-sim-qa.firebaseio.com",
+         projectId: "ibara-tools-mikiri-sim-qa",
+         storageBucket: "ibara-tools-mikiri-sim-qa.appspot.com",
+         messagingSenderId: "722262694894",
+         appId: "1:722262694894:web:974696f397801d1b188cff"
+      });
+      db = firebase.firestore();
+      */
+      break;
 }
 
 export {db};
