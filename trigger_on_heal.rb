@@ -8,10 +8,12 @@ search_config = {
       "result04s00", "result04",
       "result05s00", "result05",
       "result06s00", "result06s01", "result06",
-      "result07s00", "result07"
+      "result07s00", "result07",
+      "result08",
+      "result09s00", "result09",
    ],
 	matcher: /(r\d+b\d)\.json/,
-	# matcher: /(r2b1)\.json/,
+	# matcher: /(r1278b1)\.json/,
 }
 
 def flatten_effect2(effect)
@@ -90,16 +92,20 @@ search_config[:versions].each do |version|
                sim.apply_event_only_buff(event)
                declarer = sim.players[event[:declarer]]
                next unless declarer
-               flatten_effect(event).each do |effect|
-                  if effect[:type] == 'damage' && (effect[:critical_count] || 0) > 0
-                     next if declarer.buffs['混乱'] > 0
+               prev_declarer = nil
+               event[:effects]&.each do |effect|
+                  case effect[:type]
+                  when 'heal'
+                     next unless effect[:stat] == 'HP'
+                     prev_declarer = declarer
+                     next if declarer.buffs['魅了'] > 0
                      local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
                      local_result[declarer][:total] += 1
                   end
                end
                flatten_event(event).each do |ev|
-                  next if declarer.buffs['混乱'] > 0
-                  if ev[:skill_name] == '衝撃波'
+                  next if declarer.buffs['魅了'] > 0
+                  if ev[:skill_name] =~ /結界/
                      local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
                      local_result[declarer][:trigger] += 1
                   end

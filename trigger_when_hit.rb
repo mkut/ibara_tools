@@ -107,9 +107,11 @@ search_config[:versions].each do |version|
                   end
                end
                flatten_event(event).each do |ev|
+                  target = ev[:declarer]
+                  next if target.buffs['束縛'] > 0
                   if ev[:skill_name] =~ /迫撃/
-                     local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
-                     local_result[declarer][:trigger] += 1
+                     local_result[target] = { total: 0, trigger: 0 } unless local_result[target]
+                     local_result[target][:trigger] += 1
                   end
                end
             end

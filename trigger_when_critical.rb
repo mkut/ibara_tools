@@ -4,14 +4,20 @@ require_relative 'lib/simulator'
 search_config = {
 	root_dir: "../release",
 	versions: [
-      "result03s00", "result03",
-      "result04s00", "result04",
-      "result05s00", "result05",
-      "result06s00", "result06s01", "result06",
-      "result07s00", "result07"
+      #"result03s00", "result03",
+      #"result04s00", "result04",
+      #"result05s00", "result05",
+      #"result06s00", "result06s01", "result06",
+      #"result07s00", "result07",
+      #"result08",
+      "result09s00", "result09",
+      "result10",
+      # "result11",
+      # "result12",
+      # "result13",
    ],
 	matcher: /(r\d+b\d)\.json/,
-	# matcher: /(r2b1)\.json/,
+	# matcher: /(r1278b1)\.json/,
 }
 
 def flatten_effect2(effect)
@@ -90,18 +96,27 @@ search_config[:versions].each do |version|
                sim.apply_event_only_buff(event)
                declarer = sim.players[event[:declarer]]
                next unless declarer
+               prev_target = nil
                flatten_effect(event).each do |effect|
-                  if effect[:type] == 'damage' && (effect[:critical_count] || 0) > 0
-                     next if declarer.buffs['混乱'] > 0
-                     local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
-                     local_result[declarer][:total] += 1
+                  case effect[:type]
+                  when 'damage', 'sp_damage', 'mixed_damage'
+                     next unless (effect[:critical_count] || 0) > 0
+                     target = sim.players[effect[:target]]
+                     prev_target = target
+                     next if target.buffs['束縛'] > 0
+                     local_result[target] = { total: 0, trigger: 0 } unless local_result[target]
+                     local_result[target][:total] += 1
+                  when effect[:type] == 'consume_buff'
+                     next if prev_target.buffs['束縛'] > 0
+                     local_result[prev_target][:total] -= 1
                   end
                end
                flatten_event(event).each do |ev|
-                  next if declarer.buffs['混乱'] > 0
-                  if ev[:skill_name] == '衝撃波'
-                     local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
-                     local_result[declarer][:trigger] += 1
+                  if ev[:skill_name] =~ /再生/
+                     target =  sim.players[ev[:declarer]]
+                     next if target.buffs['束縛'] > 0
+                     local_result[target] = { total: 0, trigger: 0 } unless local_result[target]
+                     local_result[target][:trigger] += 1
                   end
                end
             end

@@ -179,6 +179,8 @@ class Parser
 			{ type: 'debuff_stat', target: $2, stat: $3, duration: $1.to_i, amount: $4.to_i }
 		when /(\d+) ターンの間、(.+)の射程が (\d+) 増加！/
 			{ type: 'buff_stat', target: $2, stat: '射程', duration: $1.to_i, amount: $3.to_i }
+		when /(.+)の(射程)が(\d+)になった！/
+			{ type: 'set_stat', target: $1, stat: $2, amount: $3.to_i}
 		when /(.+)の(AT|DF|DX|AG|HL|LK|.+特性|.+耐性|HATE)(\d+)％強化が残り (\d+) ターンに延長！/
 			{ type: 'extend_buff_stat', target: $1, stat: $2, duration: $4.to_i, amount: $3.to_i }
 		when /(.+)の(AT|DF|DX|AG|HL|LK|.+特性|.+耐性|HATE)(\d+)％弱化が残り (\d+) ターンに延長！/
@@ -201,6 +203,8 @@ class Parser
 			{ type: 'dec_debuff', target: $1, debuff: $2, amount: $3.to_i }
 		when /(.+)の(炎上|凍結|束縛|猛毒|麻痺|衰弱|盲目|腐食|朦朧|混乱|魅了|石化|暴走)深度が(\d+)減少！/
 			{ type: 'dec_debuff', target: $1, debuff: $2, amount: $3.to_i }
+		when /(.+)の(炎上)を(\d+)奪取！/
+			{ type: 'steal_debuff', target: $1, buff: $2, amount: $3.to_i }
 		when /(.+)の炎が(.+)へと燃え移った！（深度(\d+)）/
 			{ type: 'spread_debuff', target: $2, source: $1, debuff: '炎上', amount: $3.to_i }
 		when /(.+)に(祝福|守護|反射)を(\d+)(強制)?追加！/
@@ -751,6 +755,13 @@ class Parser
 					ret[:skill_name] = '通常攻撃'
 				when /暴走した力が自らを傷つける！！/
 					ret[:skill_name] = '暴走'
+				else
+					error(trace, "unknown passive declare text: #{current_text}")
+				end
+			else
+				case current_text
+				when /(.*)の([^の]*)！/
+					ret[:declarer] = $1
 				else
 					error(trace, "unknown passive declare text: #{current_text}")
 				end
