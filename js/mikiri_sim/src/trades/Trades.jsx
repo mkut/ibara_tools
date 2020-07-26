@@ -48,6 +48,17 @@ function group_trades(trades, filterPlayer, showRelated) {
    return ret;
 }
 
+function enos_allow_trade_required(trades, filterPlayer) {
+   const enos = [];
+   trades.forEach(trade => {
+      if (trade.targetEno === filterPlayer && trade.eno !== filterPlayer && !enos.includes(trade.eno)) {
+         enos.push(trade.eno);
+      }
+   })
+   enos.sort();
+   return enos;
+}
+
 function normalizeTradeType(type) {
    const opt = options.find(opt => opt instanceof Array ? opt.includes(type) : opt === type);
    if (opt) {
@@ -133,6 +144,14 @@ export default class Trades extends React.Component {
                   <label>関係する取引も表示</label>
                </div>
             </div>
+            {this.state.filterPlayer !== null && this.state.filterPlayer !== 0 && (
+               <div className="allow-trade">
+                  <div className="allow-trade-header">必要な取引生産許可(PT内含む)</div>
+                  <div>
+                     {enos_allow_trade_required(this.state.trades, this.state.filterPlayer).map(eno => <span key={eno} className="eno">{eno}</span>)}
+                  </div>
+               </div>
+            )}
             {group_trades(this.state.trades, this.state.filterPlayer, this.state.showRelated).map((trades, i) => <div key={i} className="trade-group">
                <div className="trade-group-header">{normalizeTradeType(trades[0].type)}</div>
                {trades.map(trade => <Trade key={trade.id} onRemoveTrade={this.handleRemoveTrade.bind(this)} trade={trade} players={this.props.players} />)}
