@@ -15,7 +15,7 @@
 }
 
 .trades-header {
-   border-bottom: 1px solid black;
+   border-bottom: 1px solid #666;
    display: flex;
 }
 
@@ -57,7 +57,7 @@
 
 .item-name, .ps-name {
    font-weight: bold;
-   color: #7030d0;
+   color: #9050f0;
 }
 
 .item-slot-name, .item-type {
@@ -65,14 +65,14 @@
 }
 
 .new-trade {
-   border: 1px solid #121212;
+   border: 1px solid #666;
    border-radius: 10px 10px 10px 10px;
    padding: 10px 10px;
    margin: 0 10px;
 }
 
 .share-trades {
-   border: 1px solid #121212;
+   border: 1px solid #666;
    border-radius: 10px 10px 10px 10px;
    padding: 10px 10px;
    margin: 10px 10px;
@@ -84,11 +84,11 @@
 }
 
 .special-item {
-   color: red;
+   color: #f55;
 }
 
 .warning {
-   color: red;
+   color: #f55;
    font-weight: bold;
    text-decoration: underline;
 }
@@ -155,4 +155,20 @@
 
 .allow-trade .eno {
    margin-right: 10px;
+}
+
+body{
+   background-color: #333;
+   color: #ccc;
+}
+
+.react-tabs__tab--selected {
+   background: #333;
+   border-color: #aaa;
+   color: #ccc;
+}
+
+select, button, input, textarea{
+   background-color: #222;
+   color: #ccc;
 }
