@@ -138,6 +138,7 @@ export default class Trade extends React.Component {
       }
       return (
          <div className="trade">
+            <input type="checkbox" />
             {text}
             <span className="warning">{warning}</span>
             <button onClick={this.handleClickRemoveButton.bind(this)}>削除</button>
