@@ -37,7 +37,7 @@ export default class PlayerSelector extends React.Component {
             <select value={this.state.selectingOther ? '-1' : (this.props.value || '')} onChange={this.handleSelect.bind(this)}>
                <option disabled={!this.props.allowDeselect} value="">{this.props.defaultOption || '選んでください'}</option>
                {this.props.players.map(player => <option key={player.eno} value={player.eno}>{player.name}</option>)}
-               <option value="-1">その他</option>
+               {!this.props.memberOnly && <option value="-1">その他</option>}
             </select>
             {this.state.selectingOther && <div>
                <label>ENO: </label>

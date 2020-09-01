@@ -197,7 +197,7 @@ export default class NewTrade extends React.Component {
             trs.push(
                <tr key="eno">
                   <th>誰が</th>
-                  <td><PlayerSelector value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
+                  <td><PlayerSelector memberOnly value={this.state.eno} onChange={this.handleSetEno.bind(this)} players={this.props.players} /></td>
                </tr>
             );
             trs.push(
