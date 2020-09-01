@@ -15,10 +15,20 @@ require 'nokogiri'
 $config = {
 	root_dir: "../release",
    target_enos: [370, 421, 730, 784, 987, 1013],
-   nth: 15,
+   nth: 16,
 }
 
 players = []
+
+def sugoi_material(type)
+   case type
+   when '法衣'
+      return 'すごい木材'
+   when '装飾'
+      return 'すごい石材'
+   throw "missing sugoi: #{type}"
+   end
+end
 
 def trace_material(nth, eno, equipment_name)
    exceptions = {'キングの駒' => '頭蓋骨', '青碧のペンダント' => '孔雀石'}
@@ -86,7 +96,7 @@ class Item
       ret.power = row.children[3].content.to_i
       ret.special = !row.children[0].attribute('style').nil?
       if ret.equipment?
-         ret.material = trace_material(nth, eno, ret.name)
+         ret.material = ret.name == 'すごい' ? sugoi_material(ret.type) : trace_material(nth, eno, ret.name)
       end
       if ret.material_like?
          STDERR.puts "ERR: #{row.children[4].content}" unless /［.*］([^\d]+)(\d+)\(LV(\d+)\)［.*］([^\d]+)(\d+)\(LV(\d+)\)［.*］([^\d]+)(\d+)\(LV(\d+)\)/.match(row.children[4].content)
