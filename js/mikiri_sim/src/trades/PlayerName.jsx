@@ -8,6 +8,10 @@ export default class PlayerName extends React.Component {
 
    render() {
       const { eno, target } = this.props;
-      return <span className={target ? 'target-player-name' : 'player-name'}>{this.playerName(eno)}</span>;
+      return (
+         <a target="_blank" rel="noopener noreferrer" href={`http://lisge.com/ib/k/now/r${eno}.html`}>
+            <span className={target ? 'target-player-name' : 'player-name'}>{this.playerName(eno)}</span>
+         </a>
+      );
    }
 }

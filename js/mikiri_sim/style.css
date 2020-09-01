@@ -208,3 +208,7 @@ select, button, input, textarea{
 .trades-filter .checkbox-input:checked + .checkbox-parts{
    color: #d01137;
 }
+
+a {
+   color: #80a3e3;
+}
