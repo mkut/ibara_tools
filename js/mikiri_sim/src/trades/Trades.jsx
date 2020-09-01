@@ -140,8 +140,10 @@ export default class Trades extends React.Component {
                   <PlayerSelector value={this.state.filterPlayer} onChange={this.handleChangePlayerFilter.bind(this)} players={this.props.players} allowDeselect defaultOption="全表示" />
                </div>
                <div className="trades-filter">
-                  <input type="checkbox" checked={this.state.showRelated} onChange={this.handleToggleShowRelated.bind(this)} />
-                  <label>関係する取引も表示</label>
+                  <label>
+                     <input type="checkbox" className="checkbox-input" checked={this.state.showRelated} onChange={this.handleToggleShowRelated.bind(this)} />
+                     <span className="checkbox-parts">関係する取引も表示</span>
+                  </label>
                </div>
             </div>
             {this.state.filterPlayer !== null && this.state.filterPlayer !== 0 && (
