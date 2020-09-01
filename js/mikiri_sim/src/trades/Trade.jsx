@@ -121,7 +121,8 @@ export default class Trade extends React.Component {
                <span>
                   <PlayerName eno={eno} players={this.props.players} /> が&nbsp;
                   <PlayerName eno={targetEno} players={this.props.players} target /> の&nbsp;
-                  <ItemName item={item} itemId={itemId} /> で料理する。
+                  <ItemName item={item} itemId={itemId} /> で&nbsp;
+                  <span className="item-type">{itemType}</span> を料理する。
                </span>
             );
             break;

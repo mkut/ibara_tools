@@ -241,7 +241,7 @@ export class TradeSimulator {
       }
       targetPlayer.items[trade.itemId - 1] = {
          type: trade.itemType,
-         name: `作製品(${item.name})`,
+         name: `${trade.itemType}(${item.name})`,
          special: item.special,
       };
       return {...trade,
@@ -269,8 +269,8 @@ export class TradeSimulator {
          };
       }
       targetPlayer.items[trade.itemId - 1] = {
-         type: '料理',
-         name: `料理(${item.name})`,
+         type: trade.itemType,
+         name: `${trade.itemType}(${item.name})`,
          special: item.special,
       };
       return {...trade,

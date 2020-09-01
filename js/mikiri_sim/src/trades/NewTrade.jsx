@@ -5,6 +5,7 @@ import NumberInput from '../form/NumberInput';
 import TextInput from '../form/TextInput';
 import ShopItemSelector from '../form/ShopItemSelector';
 import EquipmentTypeSelector from '../form/EquipmentTypeSelector';
+import DishTypeSelector from '../form/DishTypeSelector';
 
 export const idmax = {
    value: 0,
@@ -76,21 +77,13 @@ export default class NewTrade extends React.Component {
             });
             break;
          case '作製':
-            this.props.onCreate({
-               type: this.props.type,
-               eno: this.state.eno,
-               targetEno: this.state.targetEno,
-               itemId: this.state.itemId,
-               itemType: this.state.itemType,
-               id: ++idmax.value,
-            });
-            break;
          case '料理':
             this.props.onCreate({
                type: this.props.type,
                eno: this.state.eno,
                targetEno: this.state.targetEno,
                itemId: this.state.itemId,
+               itemType: this.state.itemType,
                id: ++idmax.value,
             });
             break;
@@ -172,9 +165,8 @@ export default class NewTrade extends React.Component {
          case '付加':
             return this.state.eno && this.state.targetEno && this.state.itemId && this.state.itemId2;
          case '作製':
-            return this.state.eno && this.state.targetEno && this.state.itemId && this.state.itemType;
          case '料理':
-            return this.state.eno && this.state.targetEno && this.state.itemId;
+            return this.state.eno && this.state.targetEno && this.state.itemId && this.state.itemType;
          case 'アイテム手渡し(外部から)':
          case 'アイテム送付(外部から)':
             return this.state.eno && this.state.targetEno && this.state.itemType && this.state.itemName;
@@ -325,6 +317,12 @@ export default class NewTrade extends React.Component {
                <tr key="itemId">
                   <th>何から(ItemID)</th>
                   <td><NumberInput value={this.state.itemId} onChange={this.handleSetItemId.bind(this)} /></td>
+               </tr>
+            );
+            trs.push(
+               <tr key="itemType">
+                  <th>何を(種類)</th>
+                  <td><DishTypeSelector value={this.state.itemType} onChange={this.handleSetItemType.bind(this)} /></td>
                </tr>
             );
             break;
