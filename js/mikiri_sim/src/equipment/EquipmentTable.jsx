@@ -18,7 +18,7 @@ export default class EquipmentTable extends React.Component {
                      <th>効果2</th>
                      <th>効果3</th>
                      {this.props.itemType === '武器' && <th>射程</th>}
-                     <th>合成強度</th>
+                     {this.props.itemType !== '料理' && <th>合成強度</th>}
                   </tr>
                </thead>
                <tbody>
@@ -32,7 +32,7 @@ export default class EquipmentTable extends React.Component {
                         <td><ItemEffect effect={equipment.item.effect2} /></td>
                         <td><ItemEffect effect={equipment.item.effect3} /></td>
                         {this.props.itemType === '武器' && <td>{equipment.item.range}</td>}
-                        <td>{material_strength(equipment.item.material) || 'No data'}({equipment.item.material})</td>
+                        {this.props.itemType !== '料理' && <td>{material_strength(equipment.item.material) || 'No data'}({equipment.item.material})</td>}
                      </tr>
                   ))}
                </tbody>
