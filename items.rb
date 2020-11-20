@@ -15,7 +15,7 @@ require 'nokogiri'
 $config = {
 	root_dir: "../release",
    target_enos: [370, 730, 784, 987, 1013],
-   nth: 17,
+   nth: 18,
 }
 
 players = []

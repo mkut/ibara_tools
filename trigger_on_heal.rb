@@ -4,16 +4,17 @@ require_relative 'lib/simulator'
 search_config = {
 	root_dir: "../release",
 	versions: [
-      "result03s00", "result03",
-      "result04s00", "result04",
-      "result05s00", "result05",
-      "result06s00", "result06s01", "result06",
-      "result07s00", "result07",
-      "result08",
-      "result09s00", "result09",
+      #"result03s00", "result03",
+      #"result04s00", "result04",
+      #"result05s00", "result05",
+      #"result06s00", "result06s01", "result06",
+      #"result07s00", "result07",
+      #"result08",
+      #"result09s00", "result09",
+      "result17",
    ],
 	matcher: /(r\d+b\d)\.json/,
-	# matcher: /(r1278b1)\.json/,
+	# matcher: /(r1288b1)\.json/,
 }
 
 def flatten_effect2(effect)
@@ -62,6 +63,7 @@ end
 
 total = 0
 trigger = 0
+ev = 0
 
 search_config[:versions].each do |version|
    /result(\d+(s\d+)?)/.match(version)
@@ -88,6 +90,7 @@ search_config[:versions].each do |version|
          local_result = {}
 
          game[:events].each do |event|
+            same_ev = false
             if event[:declarer]
                sim.apply_event_only_buff(event)
                declarer = sim.players[event[:declarer]]
@@ -99,14 +102,16 @@ search_config[:versions].each do |version|
                      next unless effect[:stat] == 'HP'
                      prev_declarer = declarer
                      next if declarer.buffs['魅了'] > 0
-                     local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
+                     local_result[declarer] = { total: 0, trigger: 0, ev: 0 } unless local_result[declarer]
                      local_result[declarer][:total] += 1
+                     local_result[declarer][:ev] += 1 unless same_ev
+                     same_ev = true
                   end
                end
                flatten_event(event).each do |ev|
                   next if declarer.buffs['魅了'] > 0
-                  if ev[:skill_name] =~ /結界/
-                     local_result[declarer] = { total: 0, trigger: 0 } unless local_result[declarer]
+                  if ev[:skill_name] =~ /高速治癒/
+                     local_result[declarer] = { total: 0, trigger: 0, ev: 0 } unless local_result[declarer]
                      local_result[declarer][:trigger] += 1
                   end
                end
@@ -118,6 +123,8 @@ search_config[:versions].each do |version|
             if r[:trigger] > 0
                total += r[:total]
                trigger += r[:trigger]
+               ev += r[:ev]
+               puts "#{fname}, #{pl.name} #{r[:total]}, #{r[:trigger]}, #{r[:ev]}"
             end
          end
       end
@@ -127,3 +134,8 @@ end
 rate = 100.0 * trigger / total
 
 puts "#{trigger}/#{total} (#{rate}%)"
+
+ev_rate = 100.0 * trigger / ev
+
+puts "#{trigger}/#{ev} (#{ev_rate}%)"
+
