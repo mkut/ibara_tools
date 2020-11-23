@@ -14,7 +14,7 @@ require 'nokogiri'
 
 $config = {
 	root_dir: "../release",
-   target_enos: [370, 730, 784, 987, 1013],
+   target_enos: [[370, 987, 1013], [730, 784]],
    nth: 18,
 }
 
@@ -147,7 +147,7 @@ class Item
    end
 end
 
-for eno in $config[:target_enos] do
+for eno in $config[:target_enos].flatten do
    fname = "r#{eno}.html"
    fpath = "#{$config[:root_dir]}/result#{format('%02d', $config[:nth])}/result/k/now/#{fname}"
 
@@ -163,7 +163,8 @@ for eno in $config[:target_enos] do
          eno: eno,
          ps: nil, # TODO
          name: nil, # TODO
-         items: []
+         items: [],
+         researches: {},
       }
       player[:name] = doc.search('.CNM').first.content
       player[:ps] = doc.search('.CIMGNM3').first.children[0].content.to_i
@@ -175,10 +176,23 @@ for eno in $config[:target_enos] do
          player[:items][item_no - 1] = item&.to_object
       end
       players.push(player)
+      research_list = doc.search('.Y870>table')[5]
+      research_list.search('tr').each do |row|
+         next if row.children[0].content == "［深度］スキル名"
+         row.children.each do |child|
+            if /^［ (\d) ］(.+)$/.match(child.content)
+               lv = $1.to_i
+               name = $2
+               player[:researches][name] = lv
+            end
+         end
+      end
 	rescue => e
 		STDERR.puts "error in #{fname}"
 		raise e
 	end
 end
 
-puts "export const players = #{JSON.dump(players)}"
+export = { players: players, teams: $config[:target_enos] }
+
+puts "export const players = #{JSON.dump(export)}"

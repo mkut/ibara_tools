@@ -6,13 +6,14 @@ import Materials from './materials/Materials';
 import Trades from './trades/Trades'
 import { players } from './fixtures';
 import Equipments from './equipment/Equipments';
+import Researches from './researches/Researches';
 
 export default class App extends React.Component {
    constructor(...args) {
       super(...args);
       this.state = {
-         players: players,
-         finalState: players,
+         players: players.players,
+         finalState: players.players,
       };
    }
 
@@ -30,6 +31,7 @@ export default class App extends React.Component {
                <Tab>素材一覧</Tab>
                <Tab>食材一覧</Tab>
                <Tab>装備一覧</Tab>
+               <Tab>研究一覧</Tab>
                <Tab>初期状態(旧)</Tab>
                <Tab>最終状態(旧)</Tab>
             </TabList>
@@ -44,6 +46,9 @@ export default class App extends React.Component {
             </TabPanel>
             <TabPanel>
                <Equipments players={this.state.players} />
+            </TabPanel>
+            <TabPanel>
+               <Researches players={this.state.players} teams={players.teams} />
             </TabPanel>
             <TabPanel>
                <Players players={this.state.players} />
