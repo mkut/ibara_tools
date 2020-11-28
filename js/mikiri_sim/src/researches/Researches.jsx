@@ -12,7 +12,7 @@ export default class Researches extends React.Component {
       skills = [...skills];
       const players = this.props.teams.map(team => team.map(eno => this.props.players.find(p => p.eno === eno)));
       return (
-         <table>
+         <table className="research-table">
             <thead>
                <tr>
                   <td />

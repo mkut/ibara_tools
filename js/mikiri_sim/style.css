@@ -212,3 +212,10 @@ select, button, input, textarea{
 a {
    color: #80a3e3;
 }
+
+.research-table th, .research-table td {
+   border: solid 1px #000;          /* 枠線指定 */
+ }
+ .research-table tr:nth-child(odd) {
+   background-color:  #444;    /* 背景色指定 */
+ }
