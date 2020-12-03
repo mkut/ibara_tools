@@ -2,6 +2,20 @@ import React from 'react'
 import Material from './Material';
 import TextInput from '../form/TextInput';
 
+function materialSortFunc(material) {
+   let name = material.item.name;
+   let power = material.item.power;
+   let plus = 0;
+   const m = material.item.name.match(/^(.*)\+(\d+)$/);
+   if (m) {
+      plus = Number(m[2]);
+      power -= plus * 5;
+      name = m[1];
+   }
+   console.log(name, power, plus);
+   return { name, power, plus };
+}
+
 class MaterialsMain extends React.Component {
    constructor(...args) {
       super(...args);
@@ -16,20 +30,20 @@ class MaterialsMain extends React.Component {
       });
    }
 
-   getVisible(itemName) {
+   getVisible(material) {
       if (!this.state.filter || this.state.filter === '') {
          return true;
       }
-      if (itemName.search(this.state.filter) >= 0) {
+      if (material.item.name.search(this.state.filter) >= 0) {
          return true;
       }
-      if (this.props.materials[itemName].item.effect1.name.search(this.state.filter) >= 0) {
+      if (material.item.effect1.name.search(this.state.filter) >= 0) {
          return true;
       }
-      if (this.props.materials[itemName].item.effect2.name.search(this.state.filter) >= 0) {
+      if (material.item.effect2.name.search(this.state.filter) >= 0) {
          return true;
       }
-      if (this.props.materials[itemName].item.effect3.name.search(this.state.filter) >= 0) {
+      if (material.item.effect3.name.search(this.state.filter) >= 0) {
          return true;
       }
       return false;
@@ -55,7 +69,7 @@ class MaterialsMain extends React.Component {
                   </tr>
                </thead>
                <tbody>
-                  {Object.keys(this.props.materials).map(itemName => <Material visible={this.getVisible(itemName)} key={itemName} data={this.props.materials[itemName]} />)}
+                  {this.props.materials.map(material => <Material visible={this.getVisible(material)} key={material.item.name} data={material} />)}
                </tbody>
             </table>
          </div>
@@ -65,17 +79,17 @@ class MaterialsMain extends React.Component {
 
 export default class Materials extends React.Component {
    render() {
-      const materials = {};
+      const materialsMap = {};
       this.props.players.forEach(player => {
          player.items.forEach((item, idx) => {
             if (item !== null && item.type === this.props.itemType) {
-               if (!materials[item.name]) {
-                  materials[item.name] = {
+               if (!materialsMap[item.name]) {
+                  materialsMap[item.name] = {
                      item: item,
                      locations: [],
                   };
                }
-               materials[item.name].locations.push({
+               materialsMap[item.name].locations.push({
                   eno: player.eno,
                   playerName: player.name,
                   index: idx + 1,
@@ -83,6 +97,14 @@ export default class Materials extends React.Component {
                });
             }
          });
+      });
+      const materials = Object.values(materialsMap);
+      materials.sort((a, b) => {
+         const aa = materialSortFunc(a);
+         const bb = materialSortFunc(b);
+         if (aa.power !== bb.power) return aa.power > bb.power ? -1 : 1;
+         if (aa.name !== bb.name) return aa.name < bb.name ? -1 : 1;
+         return aa.plus > bb.plus ? -1 : 1;
       });
       return <MaterialsMain materials={materials} itemType={this.props.itemType} />
    }
