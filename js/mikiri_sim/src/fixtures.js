@@ -1,6 +1,6 @@
 // アイテムデータはこちらを利用しています。 https://docs.google.com/spreadsheets/d/1k8GHMcF4DUg_FdBr7mIdBmLEAw-EdOOKD6th7Im4frY
 
-import { players } from './fixtures/players_20';
+import { players } from './fixtures/players_23';
 const itemData = require('./fixtures/items.csv');
 
 export { players, itemData };
