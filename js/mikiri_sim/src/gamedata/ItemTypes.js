@@ -1,7 +1,7 @@
-const weaponTypes = ['武器', '大砲', '呪器', '魔弾', '戦盾'];
-const armorTypes = ['防具', '法衣', '重鎧', '衣装', '隔壁'];
-const accessoryTypes = ['装飾', '魔晶', '護符', '御守', '薬箱'];
-const dishTypes = ['料理', '魔香', '賄飯'];
+const weaponTypes = ['武器', '大砲', '呪器', '魔弾', '戦盾', '暗器'];
+const armorTypes = ['防具', '法衣', '重鎧', '衣装', '隔壁', '聖衣'];
+const accessoryTypes = ['装飾', '魔晶', '護符', '御守', '薬箱', '楽器'];
+const dishTypes = ['料理', '魔香', '賄飯', '謎飯'];
 
 const equipmentTypes = [
    ...weaponTypes,
