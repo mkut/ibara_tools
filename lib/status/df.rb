@@ -26,17 +26,13 @@ module Status
       end
 
       def apply_equip(equip)
-         # TODO もっとマシな方法で
+         # power_to_status = {10 => 5, 15 => 6, 17 => 6, 20 => 7, 30 => 9, 35 => 10, 40 => 11, 55 => 13, 67 => 15, 75 => 16, 90 => 18, 100 => 19, 150 => 25, 180 => 28}
+         inc = ((equip[:power] + 1) ** 0.6 * 2.5).floor
          @events.push({
-            skill_name: "#{equip[:type]}#{equip[:power]}"
+            skill_name: "#{equip[:type]}#{equip[:power]}(+#{inc})"
          })
          return unless @expected && @base
-         power_to_status = {10 => 5, 15 => 6, 17 => 6, 20 => 7, 30 => 9, 35 => 10, 40 => 11, 55 => 13, 67 => 15, 75 => 16, 90 => 18, 100 => 19, 150 => 25, 180 => 28}
-         if power_to_status[equip[:power]]
-            @expected += power_to_status[equip[:power]] * 2
-         else
-            @expected = nil
-         end
+         @expected += inc
       end
    end
 end
