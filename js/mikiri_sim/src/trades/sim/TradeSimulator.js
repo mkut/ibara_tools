@@ -129,7 +129,9 @@ export class TradeSimulator {
             warning: '食べられないアイテムを食事',
          }
       }
-      player.items[trade.itemId - 1] = null;
+      if (item.type != '魔香') {
+         player.items[trade.itemId - 1] = null;
+      }
       return {...trade,
          item: item,
          warning: isFood(item.type) ? '調理前のアイテムを食事' : null,
