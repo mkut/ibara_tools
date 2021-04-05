@@ -15,7 +15,7 @@ require 'nokogiri'
 $config = {
 	root_dir: "../release",
    target_enos: [[370, 987, 1013], [730, 784]],
-   nth: 25,
+   nth: 26,
 }
 
 players = []
@@ -83,7 +83,7 @@ class Item
    end
 
    def equipment?
-      !['素材', '食材', '料理'].include?(@type)
+      !['素材', '食材', '料理', '魔香', '賄飯', '謎飯'].include?(@type)
    end
 
    def self.from_row(row, nth, eno)
